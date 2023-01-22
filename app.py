@@ -1,20 +1,26 @@
 from dash import html
 from maindash import app
-from views.display_charts import display_charts
 from views.header import display_header
-from views.menu import display_menu
+from views.treasury_yield_curve import display_treasury_yield_curve
 from maindash import data
+import dash_bootstrap_components as dbc
+from views.dxy import display_dxy
 
-app.title = "Avocado Analytics: Understand Your Avocados!"
 server = app.server
 
 app.layout = html.Div(
-    children=[
-        display_header(),
-        display_menu(),
-        display_charts()
-    ]
-)
+        [
+            display_header(),
+            dbc.Row(
+                [
+                    dbc.Col(display_treasury_yield_curve(), width=6),
+                    dbc.Col(display_dxy(), width=6),
+                ],
+            )
+        ]
+    )
 
+
+    
 if __name__ == "__main__":
     app.run_server(debug=True)
