@@ -9,6 +9,8 @@ from views.brent import display_brent
 from views.gold import display_gold
 from views.ftse100 import display_ftse
 from views.sp500 import display_sp500
+from views.nasaq import display_nasdaq
+from views.hangseng import display_hangseng
 
 server = app.server
 
@@ -31,6 +33,12 @@ app.layout = html.Div(
                 [
                     dbc.Col(display_ftse(), width=6),
                     dbc.Col(display_sp500(), width=6),
+                ],
+            ),
+            dbc.Row(
+                [
+                    dbc.Col(display_nasdaq(), width=6),
+                    dbc.Col(display_hangseng(), width=6),
                 ],
             )
         ]
