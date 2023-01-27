@@ -10,7 +10,7 @@ from maindash import app
 from dash.dependencies import Input, Output
 from pytz import timezone
 
-dxy = yf.Ticker("DX-Y.NYB")
+dxy = yf.Ticker("^FTSE")
 hist = dxy.history(period="max")
 
 now = pd.to_datetime(datetime.now(), utc=True).tz_convert('America/New_York')
@@ -25,16 +25,16 @@ fig.update_yaxes(fixedrange=False)
 fig.update_xaxes(fixedrange=False)
 fig.update_xaxes(range = [yearago, now])
 
-def display_dxy():
+def display_ftse():
     return html.Div(
         children=dcc.Graph(
-            id="dxy_fig", config={"displayModeBar": False}
+            id="ftse_fig", config={"displayModeBar": False}
         ),
     )
 
 @app.callback(
-    Output("dxy_fig", "figure"),
-    Input("dxy_fig", "relayoutData"),
+    Output("ftse_fig", "figure"),
+    Input("ftse_fig", "relayoutData"),
 )
 def update_chart(rng):
 
@@ -53,7 +53,7 @@ def update_chart(rng):
     data = go.Line(x=filtered_data.index, y=filtered_data["Close"])
 
     layout = go.Layout(
-        title="DXY",
+        title="FTSE100",
         colorway=["#17B897"],
         plot_bgcolor="white",
         # annotations=[

@@ -5,6 +5,10 @@ from views.treasury_yield_curve import display_treasury_yield_curve
 from maindash import data
 import dash_bootstrap_components as dbc
 from views.dxy import display_dxy
+from views.brent import display_brent
+from views.gold import display_gold
+from views.ftse100 import display_ftse
+from views.sp500 import display_sp500
 
 server = app.server
 
@@ -15,6 +19,18 @@ app.layout = html.Div(
                 [
                     dbc.Col(display_treasury_yield_curve(), width=6),
                     dbc.Col(display_dxy(), width=6),
+                ],
+            ),
+            dbc.Row(
+                [
+                    dbc.Col(display_brent(), width=6),
+                    dbc.Col(display_gold(), width=6),
+                ],
+            ),
+            dbc.Row(
+                [
+                    dbc.Col(display_ftse(), width=6),
+                    dbc.Col(display_sp500(), width=6),
                 ],
             )
         ]
