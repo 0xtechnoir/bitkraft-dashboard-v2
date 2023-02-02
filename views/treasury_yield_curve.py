@@ -43,19 +43,41 @@ d = {
 df = pd.DataFrame(d)
 
 def display_treasury_yield_curve():
+    
     fig = px.line(df, x="Residual Maturity", y=["Latest", "-1W", "-1M", "-6M", "-1Y"])
-    fig.layout = {
-        "title": {"text": "Treasury Yield Curves", "x": 0.08, "xanchor": "left"},
-        "xaxis": {"fixedrange": True},
-        "yaxis": {"fixedrange": True, "ticksuffix": "%"},
-    }
-    fig.update_layout(legend=dict(
-        orientation="h",
-        yanchor="bottom",
-        y=1.02,
-        xanchor="right",
-        x=1
-    ))
+    
+    fig.update_layout(
+        title=dict(
+            text="Treasury Yield Curve",
+            x=0.08,
+            xanchor="left",
+        ),
+        plot_bgcolor="white",
+        yaxis=dict(
+            tickformat=".2f", 
+            fixedrange= True,
+            side="left",
+            ticksuffix="%",
+            showline=True,
+            linecolor="grey",
+            title=""
+        ),
+        xaxis=dict( 
+            fixedrange= True,
+            showline=True,
+            linecolor="grey",
+            title="Residual Maturity"
+        ),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1,
+            title=""
+        )
+    ) 
+    
     return html.Div([
         dcc.Graph(figure=fig, config={"displayModeBar": False}),
     ])

@@ -3,12 +3,10 @@ from dash import html
 import yfinance as yf
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objs as go
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from maindash import app
 from dash.dependencies import Input, Output
-from pytz import timezone
 
 dxy = yf.Ticker("^GSPC")
 hist = dxy.history(period="max")
@@ -50,27 +48,19 @@ def update_chart(rng):
             )
         filtered_data = hist.loc[mask, :]
 
-    data = go.Line(x=filtered_data.index, y=filtered_data["Close"])
+    fig = px.line(filtered_data, x=filtered_data.index, y=filtered_data["Close"])
 
-    layout = go.Layout(
+    fig.update_layout(
         title="S&P500",
         colorway=["#17B897"],
         plot_bgcolor="white",
-        # annotations=[
-        #     go.layout.Annotation(
-        #         x=filtered_data.tail(1).index,
-        #         y=filtered_data.tail(1).iloc[0, "Close"],
-        #         text=str(y[-1]),
-        #         showarrow=True,
-        #         arrowhead=7,
-        #         ax=0,
-        #         ay=-40
-        #     )
-        # ],
         yaxis=dict(
             tickformat=".1f", 
             fixedrange= True,
             side="right",
+            showline=True,
+            linecolor="grey",
+            title=""
         ),
         xaxis=dict(
             rangeselector=dict(
@@ -98,9 +88,11 @@ def update_chart(rng):
                     dict(step="all")
                 ])
             ),
-            type="date"
+            type="date",
+            showline=True,
+            linecolor="grey",
+            title=""
         )
     )
-    fig = go.Figure(data=data, layout=layout)
 
     return fig

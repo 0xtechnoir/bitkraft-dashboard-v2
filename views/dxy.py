@@ -1,40 +1,29 @@
 from dash import dcc
 from dash import html
 import yfinance as yf
-import pandas as pd
 import plotly.express as px
-import plotly.graph_objs as go
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from maindash import app
 from dash.dependencies import Input, Output
-from pytz import timezone
 
 dxy = yf.Ticker("DX-Y.NYB")
 hist = dxy.history(period="max")
 
-now = pd.to_datetime(datetime.now(), utc=True).tz_convert('America/New_York')
-yearago = datetime.now() - relativedelta(years=1)
-yearago = pd.to_datetime(yearago, utc=True).tz_convert('America/New_York')
-
-fig = px.line(hist, x=hist.index, y="Close")
-fig.layout = {
-    "title": {"text": "US Dollar Index (DXY)", "x": 0.08, "xanchor": "left"},
-}
-fig.update_yaxes(fixedrange=False)
-fig.update_xaxes(fixedrange=False)
-fig.update_xaxes(range = [yearago, now])
-
 def display_dxy():
     return html.Div(
         children=dcc.Graph(
-            id="dxy_fig", config={"displayModeBar": False}
+            id="dxy_fig", 
+            config={"displayModeBar": False},
+            figure={
+                "layout": {
+                    "title": "US Dollar Index (DXY)",
+                }
+            }           
         ),
     )
 
 @app.callback(
     Output("dxy_fig", "figure"),
-    Input("dxy_fig", "relayoutData"),
+    Input("dxy_fig", "relayoutData"), 
 )
 def update_chart(rng):
 
@@ -50,27 +39,19 @@ def update_chart(rng):
             )
         filtered_data = hist.loc[mask, :]
 
-    data = go.Line(x=filtered_data.index, y=filtered_data["Close"])
-
-    layout = go.Layout(
+    fig = px.line(filtered_data, x=filtered_data.index, y=filtered_data["Close"])
+    
+    fig.update_layout(
         title="DXY",
         colorway=["#17B897"],
         plot_bgcolor="white",
-        # annotations=[
-        #     go.layout.Annotation(
-        #         x=filtered_data.tail(1).index,
-        #         y=filtered_data.tail(1).iloc[0, "Close"],
-        #         text=str(y[-1]),
-        #         showarrow=True,
-        #         arrowhead=7,
-        #         ax=0,
-        #         ay=-40
-        #     )
-        # ],
         yaxis=dict(
             tickformat=".1f", 
             fixedrange= True,
             side="right",
+            showline=True,
+            linecolor="grey",
+            title=""
         ),
         xaxis=dict(
             rangeselector=dict(
@@ -98,9 +79,11 @@ def update_chart(rng):
                     dict(step="all")
                 ])
             ),
-            type="date"
+            type="date",
+            showline=True,
+            linecolor="grey",
+            title=""
         )
     )
-    fig = go.Figure(data=data, layout=layout)
 
     return fig
