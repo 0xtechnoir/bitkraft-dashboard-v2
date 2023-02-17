@@ -16,6 +16,8 @@ MONGODB_CONNECTION = os.getenv('MONGODB_CONNECTION')
 coinIds = ["yield-guild-games", "alethea-artificial-liquid-intelligence-token",
     "immutable-x", "rainbow-token-2", "superfarm", "matic-network", "sipher", "blackpool-token"]
 
+labels = ["YGG", "ALI", "IMX", "RBW", "SUPER", "MATIC", "SIPHER", "BPT"]
+
 results = [None] * len(coinIds)
 
 client = pymongo.MongoClient(MONGODB_CONNECTION)
@@ -60,28 +62,28 @@ def update_chart(rng):
 
         range = ((df.index >= lower) & (df.index  <= upper))
         filtered_df = df.loc[range, :]
-
-        for col in filtered_df:
+        
+        for index, col in enumerate(filtered_df):
+            print("Index: ", index)
             series = filtered_df[col]
-            print(series)
             first = series.index.get_loc(series.first_valid_index())
             reference_value = series[first]
             print("reference value: ", reference_value)
             indexed_series = series.div(reference_value) * 100 - 100  
-            fig.add_trace(go.Scatter(x=indexed_series.index, y=indexed_series))
+            fig.add_trace(go.Scatter(x=indexed_series.index, y=indexed_series, name=labels[index]))
 
     else:
 
-        for col in df:
+        for index, col in enumerate(df):
+            print("Index: ", index)
             series = df[col]
-            print(series)
             # first valid position, i.e. first non-NaN value
             first = series.index.get_loc(series.first_valid_index())
             print("first valid index: ", first)
             reference_value = series[first]
             print("reference value: ", reference_value)
             indexed_series = series.div(reference_value) * 100 - 100  
-            fig.add_trace(go.Scatter(x=indexed_series.index, y=indexed_series))
+            fig.add_trace(go.Scatter(x=indexed_series.index, y=indexed_series, name=labels[index]))
         
     fig.update_layout(
         title=dict(
