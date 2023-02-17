@@ -3,6 +3,11 @@ from dash import html
 import pandas as pd
 import pymongo
 import plotly.express as px
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+MONGODB_CONNECTION = os.getenv('MONGODB_CONNECTION')
 
 def generate_series(data, interval):
     rec = data[interval]
@@ -21,7 +26,7 @@ def generate_series(data, interval):
         rec["bc_30year"]
     ]
 
-client = pymongo.MongoClient("mongodb+srv://bkCryptoTeam:Dg7PLzRxUwFa6Yvr@cluster0.tmpq7.mongodb.net/?retryWrites=true&w=majority")
+client = pymongo.MongoClient(MONGODB_CONNECTION)
 db = client["historical_price_data"]
 col = db["treasury_yield_curves"]
 
@@ -44,7 +49,7 @@ df = pd.DataFrame(d)
 
 def display_treasury_yield_curve():
     
-    fig = px.line(df, x="Residual Maturity", y=["Latest", "-1W", "-1M", "-6M", "-1Y"])
+    fig = px.line(df, x="Residual Maturity", y=["Latest", "-1W", "-1M", "-6M", "-1Y"], line_shape='spline')
     
     fig.update_layout(
         title=dict(

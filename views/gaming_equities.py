@@ -39,10 +39,7 @@ def update_chart(rng):
         lower = rng.get(list(rng.keys())[0])
         upper = rng.get(list(rng.keys())[1])
 
-        range = ((df.index >= lower)
-                & (df.index <= upper)
-            )
-        
+        range = ((df.index >= lower) & (df.index <= upper))
         filtered_df = df.loc[range, :]       
         reference_value = filtered_df.iloc[0]        
         indexed_df = filtered_df.div(reference_value) * 100 - 100        
