@@ -12,3 +12,6 @@ Then update requirements.txt
 pip freeze > requirements.txt
 ```
 
+Learnings:
+
+Data for a chart should all be in the same dataframe. If not you run into problems, such as having to click the range buttons twice to update the series. 
