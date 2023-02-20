@@ -12,6 +12,9 @@ from views.sp500 import display_sp500
 from views.nasaq import display_nasdaq
 from views.hangseng import display_hangseng
 from views.gaming_equities import display_gaming_equities
+from views.bit1_portfolio import display_bit1_portfolio
+from views.btc import display_btc
+from views.eth import display_eth
 
 server = app.server
 
@@ -20,33 +23,36 @@ app.layout = html.Div(
             display_header(),
             dbc.Row(
                 [
-                    dbc.Col(display_treasury_yield_curve(), width=6),
-                    dbc.Col(display_dxy(), width=6),
+                    dbc.Col(display_treasury_yield_curve(), width=4),
+                    dbc.Col(display_dxy(), width=4),
+                    dbc.Col(display_brent(), width=4)
                 ],
             ),
             dbc.Row(
                 [
-                    dbc.Col(display_brent(), width=6),
-                    dbc.Col(display_gold(), width=6),
+                    dbc.Col(display_gold(), width=4),
+                    dbc.Col(display_ftse(), width=4),
+                    dbc.Col(display_sp500(), width=4),
                 ],
             ),
             dbc.Row(
                 [
-                    dbc.Col(display_ftse(), width=6),
-                    dbc.Col(display_sp500(), width=6),
+                    dbc.Col(display_nasdaq(), width=4),
+                    dbc.Col(display_hangseng(), width=4),
+                    dbc.Col(display_gaming_equities(), width=4),
                 ],
             ),
             dbc.Row(
                 [
-                    dbc.Col(display_nasdaq(), width=6),
-                    dbc.Col(display_hangseng(), width=6),
+                    dbc.Col(display_bit1_portfolio(), width=8),
                 ],
             ),
             dbc.Row(
                 [
-                    dbc.Col(display_gaming_equities(), width=6),
+                    dbc.Col(display_btc(), width=4),
+                    dbc.Col(display_eth(), width=4),
                 ],
-            )
+            ),
         ]
     )
 

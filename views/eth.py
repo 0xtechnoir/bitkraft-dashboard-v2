@@ -1,78 +1,65 @@
 from dash import dcc
 from dash import html
 import yfinance as yf
+import pandas as pd
 import plotly.express as px
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 from maindash import app
 from dash.dependencies import Input, Output
 
-tickers = ["^GSPC", "NERD", "GAMR", "HERO", "ESPO"]
+dxy = yf.Ticker("ETH-USD")
+hist = dxy.history(period="max")
 
-df = yf.download(
-    tickers, 
-    start="2019-05-15", 
-    end=datetime.now(), 
-    interval="1d",
-)
+now = pd.to_datetime(datetime.now(), utc=True).tz_convert('America/New_York')
+yearago = datetime.now() - relativedelta(years=1)
+yearago = pd.to_datetime(yearago, utc=True).tz_convert('America/New_York')
 
-df = df.filter(regex="Adj Close")
-df = df.dropna()
-df = df["Adj Close"]
-df = df.rename(columns={'^GSPC': 'S&P500'})
+fig = px.line(hist, x=hist.index, y="Close")
+fig.layout = {
+    "title": {"text": "US Dollar Index (DXY)", "x": 0.08, "xanchor": "left"},
+}
+fig.update_yaxes(fixedrange=False)
+fig.update_xaxes(fixedrange=False)
+fig.update_xaxes(range = [yearago, now])
 
-def display_gaming_equities():
+def display_eth():
     return html.Div(
         children=dcc.Graph(
-            id="gaming_equities_fig", 
-            config={"displayModeBar": False},
+            id="eth_fig", config={"displayModeBar": False}
         ),
     )
 
 @app.callback(
-    Output("gaming_equities_fig", "figure"),
-    Input("gaming_equities_fig", "relayoutData"),
+    Output("eth_fig", "figure"),
+    Input("eth_fig", "relayoutData"),
 )
 def update_chart(rng):
+
+    filtered_data = hist
 
     if rng and "xaxis.range[0]" in rng.keys():
 
         lower = rng.get(list(rng.keys())[0])
         upper = rng.get(list(rng.keys())[1])
 
-        range = ((df.index >= lower) & (df.index <= upper))
-        filtered_df = df.loc[range, :]       
-        reference_value = filtered_df.iloc[0]        
-        indexed_df = filtered_df.div(reference_value) * 100 - 100        
-        fig = px.line(indexed_df, x=indexed_df.index, y=indexed_df.columns)
+        mask = ((hist.index >= lower)
+                & (hist.index <= upper)
+            )
+        filtered_data = hist.loc[mask, :]
 
-    else:
-        reference_value = df.iloc[0]
-        indexed_df = df.div(reference_value) * 100 - 100
-        fig = px.line(indexed_df, x=indexed_df.index, y=indexed_df.columns)
-    
+    fig = px.line(filtered_data, x=filtered_data.index, y=filtered_data["Close"])
+
     fig.update_layout(
-        title=dict(
-            text="Gaming Equities",
-            x=0.08,
-            xanchor="left",
-        ),
+        title="ETH",
         colorway=["#17B897"],
         plot_bgcolor="white",
         yaxis=dict(
-            tickformat=".2f", 
+            tickformat=".0f", 
             fixedrange= True,
             side="right",
-            ticksuffix="%",
             showline=True,
             linecolor="grey",
-            title=""
-        ),
-        legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=1.02,
-            xanchor="right",
-            x=1,
             title=""
         ),
         xaxis=dict(
@@ -94,6 +81,10 @@ def update_chart(rng):
                         label="1y",
                         step="year",
                         stepmode="backward"),
+                    dict(count=5,
+                        label="5y",
+                        step="year",
+                        stepmode="backward"),
                     dict(step="all")
                 ])
             ),
@@ -103,7 +94,5 @@ def update_chart(rng):
             title=""
         )
     )
-
-    fig.add_hline(y=0, line_dash="dash", line_color="black", line_width=0.5, opacity=0.7)
 
     return fig
