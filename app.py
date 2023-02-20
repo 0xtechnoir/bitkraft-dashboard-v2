@@ -13,6 +13,8 @@ from views.nasaq import display_nasdaq
 from views.hangseng import display_hangseng
 from views.gaming_equities import display_gaming_equities
 from views.bit1_portfolio import display_bit1_portfolio
+from views.btc import display_btc
+from views.eth import display_eth
 
 server = app.server
 
@@ -43,6 +45,12 @@ app.layout = html.Div(
             dbc.Row(
                 [
                     dbc.Col(display_bit1_portfolio(), width=8),
+                ],
+            ),
+            dbc.Row(
+                [
+                    dbc.Col(display_btc(), width=4),
+                    dbc.Col(display_eth(), width=4),
                 ],
             ),
         ]

@@ -71,7 +71,7 @@ def display_treasury_yield_curve():
             fixedrange= True,
             showline=True,
             linecolor="grey",
-            title="Residual Maturity"
+            title=""
         ),
         legend=dict(
             orientation="h",

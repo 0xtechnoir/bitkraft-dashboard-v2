@@ -88,7 +88,7 @@ def update_chart(update):
         
     fig.update_layout(
         title=dict(
-                text="BIT1 Portfolio",
+                text="BIT1 Portfolio (Indxed against ETH performance)",
                 x=0.08,
                 xanchor="left",
             ),
