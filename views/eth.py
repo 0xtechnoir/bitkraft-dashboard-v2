@@ -1,27 +1,13 @@
 from dash import dcc
 from dash import html
 import yfinance as yf
-import pandas as pd
-import plotly.express as px
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from maindash import app
 from dash.dependencies import Input, Output
+import plotly.graph_objs as go
 
 dxy = yf.Ticker("ETH-USD")
 hist = dxy.history(period="max")
-
-now = pd.to_datetime(datetime.now(), utc=True).tz_convert('America/New_York')
-yearago = datetime.now() - relativedelta(years=1)
-yearago = pd.to_datetime(yearago, utc=True).tz_convert('America/New_York')
-
-fig = px.line(hist, x=hist.index, y="Close")
-fig.layout = {
-    "title": {"text": "US Dollar Index (DXY)", "x": 0.08, "xanchor": "left"},
-}
-fig.update_yaxes(fixedrange=False)
-fig.update_xaxes(fixedrange=False)
-fig.update_xaxes(range = [yearago, now])
+df = hist.filter(regex="Close")
 
 def display_eth():
     return html.Div(
@@ -36,21 +22,21 @@ def display_eth():
 )
 def update_chart(rng):
 
-    filtered_data = hist
+    filtered_data = df
 
     if rng and "xaxis.range[0]" in rng.keys():
 
         lower = rng.get(list(rng.keys())[0])
         upper = rng.get(list(rng.keys())[1])
 
-        mask = ((hist.index >= lower)
-                & (hist.index <= upper)
+        mask = ((df.index >= lower)
+                & (df.index <= upper)
             )
-        filtered_data = hist.loc[mask, :]
+        filtered_data = df.loc[mask]
 
-    fig = px.line(filtered_data, x=filtered_data.index, y=filtered_data["Close"])
+    trace = go.Scatter(x= filtered_data.index, y=filtered_data["Close"], mode='lines')
 
-    fig.update_layout(
+    layout = dict(
         title="ETH",
         colorway=["#17B897"],
         plot_bgcolor="white",
@@ -94,5 +80,6 @@ def update_chart(rng):
             title=""
         )
     )
+    fig = dict(data=[trace], layout=layout)
 
     return fig

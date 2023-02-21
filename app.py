@@ -40,7 +40,12 @@ app.layout = html.Div(
                 [
                     dbc.Col(display_nasdaq(), width=4),
                     dbc.Col(display_hangseng(), width=4),
-                    dbc.Col(display_gaming_equities(), width=4),
+                    
+                ],
+            ),
+            dbc.Row(
+                [
+                    dbc.Col(display_gaming_equities(), width=8),
                 ],
             ),
             dbc.Row(

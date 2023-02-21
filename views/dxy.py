@@ -1,23 +1,19 @@
 from dash import dcc
 from dash import html
 import yfinance as yf
-import plotly.express as px
 from maindash import app
 from dash.dependencies import Input, Output
+import plotly.graph_objs as go
 
 dxy = yf.Ticker("DX-Y.NYB")
 hist = dxy.history(period="max")
+df = hist.filter(regex="Close")
 
 def display_dxy():
     return html.Div(
         children=dcc.Graph(
             id="dxy_fig", 
             config={"displayModeBar": False},
-            figure={
-                "layout": {
-                    "title": "US Dollar Index (DXY)",
-                }
-            }           
         ),
     )
 
@@ -27,22 +23,26 @@ def display_dxy():
 )
 def update_chart(rng):
 
-    filtered_data = hist
+    filtered_data = df
 
     if rng and "xaxis.range[0]" in rng.keys():
 
         lower = rng.get(list(rng.keys())[0])
         upper = rng.get(list(rng.keys())[1])
 
-        mask = ((hist.index >= lower)
-                & (hist.index <= upper)
+        mask = ((df.index >= lower)
+                & (df.index <= upper)
             )
-        filtered_data = hist.loc[mask, :]
+        filtered_data = df.loc[mask]
 
-    fig = px.line(filtered_data, x=filtered_data.index, y=filtered_data["Close"])
+    trace = go.Scatter(x= filtered_data.index, y=filtered_data["Close"], mode='lines')
     
-    fig.update_layout(
-        title="DXY",
+    layout = dict(
+        title= dict(
+            text="US Dollar Index (DXY)",
+            x=0.08,
+            xanchor="left"
+        ),
         colorway=["#17B897"],
         plot_bgcolor="white",
         yaxis=dict(
@@ -85,5 +85,6 @@ def update_chart(rng):
             title=""
         )
     )
+    fig = dict(data=[trace], layout=layout)
 
     return fig
