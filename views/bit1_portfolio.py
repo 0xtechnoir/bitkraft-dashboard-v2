@@ -1,7 +1,6 @@
 from maindash import app
 from dash.dependencies import Input, Output
-from dash import dcc
-from dash import html
+from dash import dcc, html, dash_table
 import pymongo
 import pandas as pd
 import plotly.express as px 
@@ -46,12 +45,14 @@ for index, coin in enumerate(coinIds):
 df.sort_index(inplace=True)   
 
 def display_bit1_portfolio():
-    return html.Div(
-        children=dcc.Graph(
+    return html.Div([
+        dcc.Graph(
             id="bit1_portfolio_fig", 
             config={"displayModeBar": False},
         ),
-    )
+    ])
+
+
 
 @app.callback(
     Output("bit1_portfolio_fig", "figure"),

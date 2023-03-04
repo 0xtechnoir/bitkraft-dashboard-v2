@@ -16,6 +16,7 @@ from views.bit1_portfolio import display_bit1_portfolio
 from views.btc import display_btc
 from views.eth import display_eth
 from views.crypto_price_performance_30d import display_crypto_price_performance_30d_chart
+from views.bit1_token_performance_table_usd import display_bit1_portfolio_table_usd
 
 server = app.server
 
@@ -52,6 +53,11 @@ app.layout = html.Div(
                 [
                     dbc.Col(display_bit1_portfolio(), width=8),
                     dbc.Col(display_btc(), width=4),
+                ],
+            ),
+            dbc.Row(
+                [
+                    dbc.Col(display_bit1_portfolio_table_usd(), width=8),
                 ],
             ),
             dbc.Row(
