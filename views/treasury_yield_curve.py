@@ -49,8 +49,20 @@ df = pd.DataFrame(d)
 
 def display_treasury_yield_curve():
     
-    fig = px.line(df, x="Residual Maturity", y=["Latest", "-1W", "-1M", "-6M", "-1Y"], line_shape='spline')
-    
+    fig = px.line(
+        df, 
+        x="Residual Maturity", 
+        y=["Latest", "-1W", "-1M", "-6M", "-1Y"], 
+        line_shape='spline',
+        color_discrete_map={
+            "-1W": "#FADBD8",
+            "-1M": "#EBDEF0",
+            "-6M": "#D4E6F1",
+            "-1Y": "#D4EFDF",
+            "Latest": "#2ECC71",
+        },
+    )
+
     fig.update_layout(
         title=dict(
             text="Treasury Yield Curve",
