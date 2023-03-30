@@ -55,7 +55,6 @@ app.layout = html.Div(
             ),
             dbc.Row(
                 [                 
-                    dbc.Col(display_eth(), width=4),
                     dbc.Col(display_crypto_price_performance_30d_chart(), width=8),
                 ],
             ),
