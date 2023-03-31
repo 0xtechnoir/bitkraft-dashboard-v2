@@ -5,6 +5,7 @@ import pandas as pd
 import os
 import datetime
 from dotenv import load_dotenv
+from math import log10, floor
 
 load_dotenv()
 MONGODB_CONNECTION = os.getenv('MONGODB_CONNECTION')
@@ -14,22 +15,11 @@ coinIds = ["yield-guild-games", "alethea-artificial-liquid-intelligence-token",
 
 labels = ["YGG", "ALI", "IMX", "RBW", "SUPER", "MATIC", "SIPHER", "BPT"]
 
-costBasis = {
-  "YGG": 0.047,
-  "ALI": 0.01,
-  "IMX": 0.0256,
-  "RBW": 0.0228,
-  "SUPER": 0.18,
-  "MATIC": 0.9,
-  "SIPHER": 0.06,
-  "BPT": 2.0,
-}
-
 client = pymongo.MongoClient(MONGODB_CONNECTION)
 db = client["historical_price_data"]
 
 #  create a new dataframe for the table
-df_table = pd.DataFrame(columns=['Token', 'Cost Basis', 'Current', 'ROI', 'Prior Week', 'YTD', 'Prior Year', 'Weekly Change', 'YTD Change', 'YoY Change'])
+df_table = pd.DataFrame(columns=['Token', 'Current', 'Prior Week', 'YTD', 'Prior Year', 'Weekly Change', 'YTD Change', 'YoY Change'])
 
 today = datetime.date.today()
 day_of_year = today.timetuple().tm_yday
@@ -37,24 +27,20 @@ day_of_year = today.timetuple().tm_yday
 # Loop through the coinIds and create a dataframe for each coin
 for index, coin in enumerate(coinIds):
     col = db[coinIds[index]]
-    cursor = col.find({}, {"_id":0, "time":1, "usd_value":1})
+    cursor = col.find({}, {"_id":0, "time":1, "eth_value":1})
     # Convert the cursor to a list of dictionaries, then to a dataframe
     li = list(cursor)
     df1 = pd.DataFrame(li)
     df1['date'] = pd.to_datetime(df1["time"], unit="ms")
-    current_price = df1['usd_value'].iloc[-1]
-    prior_week_price = df1['usd_value'].iloc[-8]
-    ytd_price = df1['usd_value'].iloc[-day_of_year]
-    prior_year_price = df1['usd_value'].iloc[-366] if len(df1) >= 366 else '-' 
+    current_price = df1['eth_value'].iloc[-1]
+    prior_week_price = df1['eth_value'].iloc[-8]
+    ytd_price = df1['eth_value'].iloc[-day_of_year]
+    prior_year_price = df1['eth_value'].iloc[-366] if len(df1) >= 366 else '-' 
     name = labels[index]
-    cb = costBasis.get(name) 
-    roi = ((current_price - cb) / cb) * 100
 
     new_entry = {
         'Token': name,
-        'Cost Basis': cb,
         'Current': current_price,
-        'ROI': int(round(roi)),
         'Prior Week': prior_week_price,
         'YTD': ytd_price,
         'Prior Year': prior_year_price,
@@ -65,22 +51,48 @@ for index, coin in enumerate(coinIds):
 
     df_table.loc[labels[index]] = new_entry
 
-formatNum = lambda x: round(x, 2) if isinstance(x, (float)) else x
+# def format_dynamic_decimal(value):
+#     if isinstance(value, (int, float)):
+#         # Remove trailing zeros and decimal point if not necessary
+#         formatted_value = ("{:.10f}".format(value)).rstrip("0").rstrip(".")
+#         return formatted_value
+#     else:
+#         return value
+pd.set_option('display.float_format', lambda x: '%.3f' % x)
 
-# For negative values, remove sign and add brackets. Add % symbol to relevant values 
-def formatCell(val, column):
+def format_dynamic_decimal(value):
+    if isinstance(value, (int, float)):
+        # Format the float to a fixed number of decimal places without scientific notation
+        formatted_value = "{:.10f}".format(value).rstrip("0").rstrip(".")
+        return formatted_value
+    else:
+        return value
+
+
+def round_to_1(x):
+    if isinstance(x, (int, float)):
+        return round(x, -int(floor(log10(abs(x)))))
+    else:
+        return x
+
+
+format_func = lambda x: round(x, 8) if isinstance(x, (float)) else x
+
+def apply_brackets(val):
     if isinstance(val, (int, float)) and val < 0:
-        return f'({abs(val)}{ "%" if column in ["ROI", "Weekly Change", "YTD Change", "YoY Change"] else ""})'
+        return f'({abs(val)})'
     elif isinstance(val, (int, float)):
-        return f'{val}{ "%" if column in ["ROI", "Weekly Change", "YTD Change", "YoY Change"] else ""}'
+        return f'{val}'
     else:
         return val
+    
+# df = df_table.applymap(round_to_1).applymap(apply_brackets)
+df = df_table.applymap(format_dynamic_decimal).applymap(apply_brackets)
+print(df)
 
-df = df_table.applymap(formatNum).apply(lambda x: x.map(lambda y: formatCell(y, x.name)))
-
-def display_bit1_portfolio_table_usd():
+def display_bit1_portfolio_table_eth():
     return html.Div([
-        html.H4('BIT1 Portfolio ($ Denominated)', style={'text-align': 'left'}),
+        html.H6('BIT1 Portfolio (ETH Denominated)', style={'text-align': 'left'}),
         dash_table.DataTable(
             columns=[{"name": i, "id": i} for i in df.columns],
             data=df.to_dict("records"),
@@ -89,9 +101,8 @@ def display_bit1_portfolio_table_usd():
                 {
                     'if': {'column_id': c, 'filter_query': '{{{}}} contains "("'.format(c)},
                     'color': 'red'
-                } for c in ['ROI', 'Weekly Change', 'YTD Change', 'YoY Change']
+                } for c in ['Weekly Change', 'YTD Change', 'YoY Change']
             ],
             style_header={'fontWeight': 'bold'},
         ),
-        html.P('Note: SUPER token option at $0.18 not yet executed')
     ])

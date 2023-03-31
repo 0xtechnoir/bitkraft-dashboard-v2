@@ -17,6 +17,7 @@ from views.btc import display_btc
 from views.eth import display_eth
 from views.crypto_price_performance_30d import display_crypto_price_performance_30d_chart
 from views.bit1_token_performance_table_usd import display_bit1_portfolio_table_usd
+from views.bit1_token_performance_table_eth import display_bit1_portfolio_table_eth
 
 server = app.server
 
