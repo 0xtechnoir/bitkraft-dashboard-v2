@@ -37,7 +37,11 @@ def update_chart(rng):
     trace = go.Scatter(x= filtered_data.index, y=filtered_data["Close"], mode='lines')
 
     layout = dict(
-        title="ETH",
+        title= dict(
+            text="ETH",
+            x=0.08,
+            xanchor="left"
+        ),
         colorway=["#17B897"],
         plot_bgcolor="white",
         yaxis=dict(

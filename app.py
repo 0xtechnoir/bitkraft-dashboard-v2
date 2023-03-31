@@ -53,7 +53,6 @@ app.layout = html.Div(
             dbc.Row(
                 [
                     dbc.Col(display_bit1_portfolio(), width=8),
-                    dbc.Col(display_btc(), width=4),
                 ],
             ),
             dbc.Row(
@@ -63,8 +62,13 @@ app.layout = html.Div(
             ),
             dbc.Row(
                 [                 
-                    dbc.Col(display_eth(), width=4),
                     dbc.Col(display_crypto_price_performance_30d_chart(), width=8),
+                ],
+            ),
+            dbc.Row(
+                [                 
+                    dbc.Col(display_btc(), width=4),
+                    dbc.Col(display_eth(), width=4),
                 ],
             ),
         ]
