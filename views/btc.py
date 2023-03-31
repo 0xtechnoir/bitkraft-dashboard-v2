@@ -3,7 +3,7 @@ from dash import html
 import yfinance as yf
 from maindash import app
 from dash.dependencies import Input, Output
-import plotly.graph_objs as go
+import plotly.express as px
 
 dxy = yf.Ticker("BTC-USD")
 hist = dxy.history(period="max")
@@ -34,9 +34,9 @@ def update_chart(rng):
             )
         filtered_data = df.loc[mask, :]
 
-    trace = go.Scatter(x= filtered_data.index, y=filtered_data["Close"], mode='lines')
+    fig = px.line(df, x=filtered_data.index, y=filtered_data["Close"])
 
-    layout = dict(
+    fig.update_layout(
         title= dict(
             text="BTC",
             x=0.08,
@@ -84,6 +84,5 @@ def update_chart(rng):
             title=""
         )
     )
-    fig = dict(data=[trace], layout=layout)
     
     return fig
