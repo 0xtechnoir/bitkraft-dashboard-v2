@@ -3,11 +3,16 @@ from dash import html
 import yfinance as yf
 from maindash import app
 from dash.dependencies import Input, Output
-import plotly.graph_objs as go
+import plotly.express as px
+from datetime import datetime, timedelta
+import pandas as pd
 
 dxy = yf.Ticker("DX-Y.NYB")
 hist = dxy.history(period="max")
 df = hist.filter(regex="Close")
+
+now = pd.Timestamp(datetime.now(), tz="America/New_York")
+five_years_ago = now - timedelta(days=5 * 365)
 
 def display_dxy():
     return html.Div(
@@ -24,7 +29,7 @@ def display_dxy():
 def update_chart(rng):
 
     filtered_data = df
-
+    
     if rng and "xaxis.range[0]" in rng.keys():
 
         lower = rng.get(list(rng.keys())[0])
@@ -34,10 +39,21 @@ def update_chart(rng):
                 & (df.index <= upper)
             )
         filtered_data = df.loc[mask]
+    else:
+        lower = five_years_ago
+        upper = now
+        mask = ((df.index >= lower)
+                & (df.index <= upper)
+            )
+        filtered_data = df.loc[mask]
 
-    trace = go.Scatter(x= filtered_data.index, y=filtered_data["Close"], mode='lines')
+
+    fig = px.line(df, x=filtered_data.index, y=filtered_data["Close"])
+
+    y_min = filtered_data['Close'].min()
+    y_max = filtered_data['Close'].max()
     
-    layout = dict(
+    fig.update_layout(
         title= dict(
             text="US Dollar Index (DXY)",
             x=0.08,
@@ -48,6 +64,7 @@ def update_chart(rng):
         yaxis=dict(
             tickformat=".1f", 
             fixedrange= True,
+            range=[y_min, y_max],
             side="right",
             showline=True,
             linecolor="grey",
@@ -76,15 +93,14 @@ def update_chart(rng):
                         label="5y",
                         step="year",
                         stepmode="backward"),
-                    dict(step="all")
                 ])
             ),
+            range=[lower, now],
             type="date",
             showline=True,
             linecolor="grey",
             title=""
         )
     )
-    fig = dict(data=[trace], layout=layout)
 
     return fig
