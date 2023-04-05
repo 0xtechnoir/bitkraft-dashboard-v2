@@ -14,14 +14,16 @@ col = db['nft_collection_ranking']
 pd.set_option('display.float_format', '{:,.2f}'.format)
 
 column_names = [
-    "name", 
-    "7D Vol", 
-    "Market Cap", 
-    "Floor Ξ", 
-    "Floor $",  
+    "Rank",
+    "Name", 
+    "7D Vol ($)", 
+    "Market Cap ($)", 
+    "Floor (Ξ)", 
+    "Floor ($)",  
     "24H Floor Chg %",
     "7D Floor Chg %",
     "30D Floor Chg %",
+    "Total Supply",
     "Holders",
 ]
 
@@ -31,14 +33,16 @@ sorted_records = col.find().sort("Rank", 1).limit(20)
 for record in sorted_records:
 
     new_row = pd.DataFrame([{
-        'name': record['name'],
-        '7D Vol': record['volume_usd'],
-        "Market Cap": record['market_cap_usd'],
-        "Floor Ξ": record['floor_price_eth'],
-        "Floor $": record['floor_price_usd'],
+        'Rank': record['Rank'],
+        'Name': record['name'],
+        '7D Vol ($)': record['volume_usd'],
+        "Market Cap ($)": record['market_cap_usd'],
+        "Floor (Ξ)": record['floor_price_eth'],
+        "Floor ($)": record['floor_price_usd'],
         "24H Floor Chg %": record['floor_change_24hr'],
         "7D Floor Chg %": record['floor_change_7d'],
         "30D Floor Chg %": record['floor_change_30d'],
+        "Total Supply": record['total_supply'],
         "Holders": record['holder_num'],
     }], columns=column_names)
 
@@ -47,7 +51,7 @@ for record in sorted_records:
 formatNum = lambda x: round(x, 2) if isinstance(x, (float)) else x
     
 def formatCell(val, column):
-    no_decimal_columns = ['7D Vol', 'Market Cap', 'Floor $', 'Holders']
+    no_decimal_columns = ['Rank', '7D Vol', 'Market Cap', 'Floor $', 'Total Supply', 'Holders']
     if pd.isna(val):
         return "-"
     elif isinstance(val, (int, float)) and val < 0:
@@ -71,12 +75,12 @@ def display_nft_collection_ranking_table():
             columns=[{"name": i, "id": i} for i in df_table.columns],
             data=df_table.to_dict("records"),
             style_cell={
-                'textAlign': 'left' if column == 'name' else 'center'
+                'textAlign': 'left' if column == 'Name' else 'center'
                 for column in df_table.columns
             },
             style_data_conditional=[
                 {
-                'if': {'column_id': 'name'},
+                'if': {'column_id': 'Name'},
                 'textAlign': 'left',
                 },
                 *[
