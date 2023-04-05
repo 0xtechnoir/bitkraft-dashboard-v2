@@ -61,12 +61,7 @@ def formatCell(val, column):
     else:
         return val
 
-
-
-
 df_table = df.applymap(formatNum).apply(lambda x: x.map(lambda y: formatCell(y, x.name)))
-
-print(df_table)
 
 def display_nft_collection_ranking_table():
     return html.Div([
