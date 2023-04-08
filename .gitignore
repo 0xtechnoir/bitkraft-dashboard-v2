@@ -2,3 +2,5 @@ venv
 *.pyc
 .DS_Store # Only if you are using macOS
 .env
+.DS_Store
+package-lock.json

@@ -1,9 +1,14 @@
 from dash import html
 from maindash import app
+import requests
+import subprocess
+from flask import request
+import dash_bootstrap_components as dbc
+from dash.dependencies import Input, Output
+
+#  Views - Individual Charts
 from views.header import display_header
 from views.treasury_yield_curve import display_treasury_yield_curve
-from maindash import data
-import dash_bootstrap_components as dbc
 from views.dxy import display_dxy
 from views.brent import display_brent
 from views.gold import display_gold
@@ -22,22 +27,21 @@ from views.nft_rankings import display_nft_collection_ranking_table
 from views.iframe_test import display_iframe
 
 server = app.server
-
 app.layout = html.Div(
         [
             display_header(),
             dbc.Row(
                 [
-                    dbc.Col(display_treasury_yield_curve(), width=4),
-                    dbc.Col(display_dxy(), width=4),
-                    dbc.Col(display_brent(), width=4)
+                    dbc.Col(display_treasury_yield_curve()),
+                    dbc.Col(display_dxy()),
+                    dbc.Col(display_brent())
                 ],
             ),
             dbc.Row(
                 [
-                    dbc.Col(display_gold(), width=4),
-                    dbc.Col(display_ftse(), width=4),
-                    dbc.Col(display_sp500(), width=4),
+                    dbc.Col(display_gold()),
+                    dbc.Col(display_ftse()),
+                    dbc.Col(display_sp500()),
                 ],
             ),
             dbc.Row(
@@ -81,11 +85,41 @@ app.layout = html.Div(
             ),
             dbc.Row(
                 [                 
-                    dbc.Col(display_iframe(), width=8),
+                    dbc.Col(
+                        [
+                            html.Button('Generate PDF', id='generate-pdf-button'),
+                            html.Div(id='generate-pdf-result'),
+                        ]
+                    ),
+                    dbc.Col(display_iframe())
                 ],
             ),
         ]
     )
+
+# Create a callback function to trigger the Flask endpoint
+@app.callback(
+    Output('generate-pdf-result', 'children'),
+    [Input('generate-pdf-button', 'n_clicks')]
+)
+def on_generate_pdf_click(n_clicks):
+    if n_clicks is not None:
+        response = requests.post('http://localhost:8050/generate_pdf')
+        result = response.json()
+        return result['message']
+    return ''
     
+# Generate PDF Flask endpoint
+# Starts up a node.js subprocess that runs a Puppeteer script
+@app.server.route('/generate_pdf', methods=['POST'])
+def run_generate_pdf():
+    print("run_generate_pdf invoked")
+    try:
+        subprocess.check_call(['node', 'generate_pdf.js'])
+        return {'status': 'success', 'message': 'PDF generated successfully'}
+    except subprocess.CalledProcessError as error:
+        print(f'Error occurred: {error}')
+        return {'status': 'error', 'message': 'Error generating PDF'}
+
 if __name__ == "__main__":
     app.run_server(debug=True)
