@@ -4,8 +4,16 @@ const puppeteer = require('puppeteer');
   const appUrl = 'http://localhost:8050/';
   const outputFile = 'output.pdf';
 
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    headless: true,
+  });
   const page = await browser.newPage();
+
+  // Set the viewport dimensions
+  await page.setViewport({
+    width: 1416,
+    height: 800,
+  });
 
   await page.goto(appUrl, { waitUntil: 'networkidle2' });
 
