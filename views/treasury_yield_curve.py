@@ -92,7 +92,7 @@ def display_treasury_yield_curve():
             xanchor="right",
             x=1,
             title=""
-        )
+        ),
     ) 
     
     return html.Div([
