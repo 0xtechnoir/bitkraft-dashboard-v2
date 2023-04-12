@@ -25,23 +25,24 @@ from views.bit1_token_performance_table_usd import display_bit1_portfolio_table_
 from views.btc_pearson_correlation import display_btc_pearson_correlation
 from views.nft_rankings import display_nft_collection_ranking_table
 from views.iframe_test import display_iframe
+from views.btc_futures_aggregated_open_interest import display_btc_futures_agg_open_interest_chart
+from views.eth_futures_aggregated_open_interest import display_eth_futures_agg_open_interest_chart
 
 server = app.server
 app.layout = html.Div(
         [
-            display_header(),
             dbc.Row(
                 [
-                    dbc.Col(display_treasury_yield_curve()),
-                    dbc.Col(display_dxy()),
-                    dbc.Col(display_brent())
+                    dbc.Col(display_treasury_yield_curve(), width=4, style={'height': '100%', 'overflow': 'auto'}),
+                    dbc.Col(display_dxy(), width=4, style={'height': '100%', 'overflow': 'auto'}),
+                    dbc.Col(display_brent(), width=4, style={'height': '100%', 'overflow': 'auto'})
                 ],
             ),
             dbc.Row(
                 [
-                    dbc.Col(display_gold()),
-                    dbc.Col(display_ftse()),
-                    dbc.Col(display_sp500()),
+                    dbc.Col(display_gold(), width=4),
+                    dbc.Col(display_ftse(), width=4),
+                    dbc.Col(display_sp500(), width=4),
                 ],
             ),
             dbc.Row(
@@ -83,6 +84,12 @@ app.layout = html.Div(
                     dbc.Col(display_nft_collection_ranking_table(), width=8),
                 ],
             ),
+             dbc.Row(
+                [                 
+                    dbc.Col(display_btc_futures_agg_open_interest_chart(), width=6),
+                    dbc.Col(display_eth_futures_agg_open_interest_chart(), width=6),
+                ],
+            ),
             dbc.Row(
                 [                 
                     dbc.Col(
@@ -120,6 +127,6 @@ def run_generate_pdf():
     except subprocess.CalledProcessError as error:
         print(f'Error occurred: {error}')
         return {'status': 'error', 'message': 'Error generating PDF'}
-
+    
 if __name__ == "__main__":
     app.run_server(debug=True)

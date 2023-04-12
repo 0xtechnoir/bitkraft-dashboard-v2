@@ -98,7 +98,7 @@ def update_chart(update):
                 title=""
             ),
         yaxis=dict(
-                tickformat=".2f", 
+                tickformat=".0f", 
                 fixedrange= True,
                 side="right",
                 ticksuffix="%",
