@@ -28,6 +28,7 @@ from views.iframe_test import display_iframe
 from views.btc_futures_aggregated_open_interest import display_btc_futures_agg_open_interest_chart
 from views.eth_futures_aggregated_open_interest import display_eth_futures_agg_open_interest_chart
 from views.fear_and_greed_index import display_fear_and_greed_chart
+from views.fed_liquidity_index import display_fed_liquidity_index_chart
 
 server = app.server
 app.layout = html.Div(
@@ -91,6 +92,11 @@ app.layout = html.Div(
                 [                 
                     dbc.Col(display_btc_futures_agg_open_interest_chart(), width=6),
                     dbc.Col(display_eth_futures_agg_open_interest_chart(), width=6),
+                ],
+            ),
+            dbc.Row(
+                [                 
+                    dbc.Col(display_fed_liquidity_index_chart(), width=6),
                 ],
             ),
             dbc.Row(
