@@ -51,7 +51,8 @@ def update_chart(relayoutData=None):
             showline=True,
             linecolor="grey",
             title="",
-            range=[0, 100]
+            showgrid=True,
+            gridcolor="lightgrey"
         ),
         xaxis=dict(
             rangeselector=dict(
