@@ -102,6 +102,46 @@ app.layout = html.Div(
             dbc.Row(
                 [                 
                     dbc.Col(
+                        html.Iframe(
+                           width="100%", 
+                           height="420", 
+                           src="https://embed.theblockcrypto.com/data/crypto-markets/options/aggregated-open-interest-of-bitcoin-options/embed",
+                           title="Aggregated Open Interest of Bitcoin Options"
+                        ), width=6
+                    ),
+                    dbc.Col(
+                        html.Iframe(
+                           width="100%", 
+                           height="420", 
+                           src="https://embed.theblockcrypto.com/data/crypto-markets/options/btc-put-call-ratio/embed",
+                           title="BTC Put/Call Ratio"
+                        ), width=6
+                    ),
+                ],
+            ),
+            dbc.Row(
+                [                 
+                    dbc.Col(
+                        html.Iframe(
+                           width="100%", 
+                           height="420", 
+                           src="https://embed.theblockcrypto.com/data/crypto-markets/options/aggregated-open-interest-of-ethereum-options/embed",
+                           title="Aggregated Open Interest of Ethereum Options"
+                        ), width=6
+                    ),
+                    dbc.Col(
+                        html.Iframe(
+                           width="100%", 
+                           height="420", 
+                           src="https://embed.theblockcrypto.com/data/crypto-markets/options/eth-put-call-ratio/embed",
+                           title="ETH Put/Call Ratio"
+                        ), width=6
+                    ),
+                ],
+            ),
+            dbc.Row(
+                [                 
+                    dbc.Col(
                         [
                             html.Button('Generate PDF', id='generate-pdf-button'),
                             html.Div(id='generate-pdf-result'),
