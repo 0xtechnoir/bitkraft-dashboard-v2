@@ -4,7 +4,9 @@ import pymongo
 import pandas as pd
 import os
 import datetime
+from dateutil.relativedelta import relativedelta
 from dotenv import load_dotenv
+
 
 load_dotenv()
 MONGODB_CONNECTION = os.getenv('MONGODB_CONNECTION')
@@ -29,10 +31,15 @@ client = pymongo.MongoClient(MONGODB_CONNECTION)
 db = client["historical_price_data"]
 
 #  create a new dataframe for the table
-df_table = pd.DataFrame(columns=['Token', 'Cost Basis', 'Current', 'ROI', 'Prior Week', 'YTD', 'Prior Year', 'Weekly Change', 'YTD Change', 'YoY Change'])
+df_table = pd.DataFrame(columns=['Token', 'Cost Basis', 'Current', 'ROI', 'Prior Week', 'Prior Year', 'Weekly Change', 'YTD Change', 'YoY Change'])
 
 today = datetime.date.today()
 day_of_year = today.timetuple().tm_yday
+one_week_ago = today - datetime.timedelta(days=7)
+jan_1st = datetime.date(today.year, 1, 1)
+one_year_ago = today - relativedelta(years=1)
+
+
 
 # Loop through the coinIds and create a dataframe for each coin
 for index, coin in enumerate(coinIds):
@@ -41,11 +48,26 @@ for index, coin in enumerate(coinIds):
     # Convert the cursor to a list of dictionaries, then to a dataframe
     li = list(cursor)
     df1 = pd.DataFrame(li)
+    print(df1)
     df1['date'] = pd.to_datetime(df1["time"], unit="ms")
     current_price = df1['usd_value'].iloc[-1]
-    prior_week_price = df1['usd_value'].iloc[-8]
-    ytd_price = df1['usd_value'].iloc[-day_of_year]
-    prior_year_price = df1['usd_value'].iloc[-366] if len(df1) >= 366 else '-' 
+    # prior_week_price = df1['usd_value'].iloc[-8]
+    
+    prior_week_price_df = df1[df1['date'].dt.date == one_week_ago]
+    prior_week_price = prior_week_price_df['usd_value'].iloc[0] if not prior_week_price_df.empty else None
+
+    ytd_price_df = df1[df1['date'].dt.date == jan_1st]
+    ytd_price = ytd_price_df['usd_value'].iloc[0] if not ytd_price_df.empty else None
+
+    # ytd_price = df1['usd_value'].iloc[-day_of_year]
+    print('Coin: ', coinIds[index])
+    print('Price on Jan 1st 2023: ', ytd_price)
+
+    prior_year_price_df = df1[df1['date'].dt.date == one_year_ago]
+    prior_year_price = prior_year_price_df['usd_value'].iloc[0] if not prior_year_price_df.empty else None
+
+    # prior_year_price = df1['usd_value'].iloc[-366] if len(df1) >= 366 else '-' 
+    
     name = labels[index]
     cb = costBasis.get(name) 
     roi = ((current_price - cb) / cb) * 100
@@ -56,7 +78,7 @@ for index, coin in enumerate(coinIds):
         'Current': current_price,
         'ROI': int(round(roi)),
         'Prior Week': prior_week_price,
-        'YTD': ytd_price,
+        # 'YTD': ytd_price,
         'Prior Year': prior_year_price,
         'Weekly Change': ((current_price - prior_week_price)/prior_week_price)*100,
         'YTD Change': ((current_price - ytd_price)/ytd_price)*100,
