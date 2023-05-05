@@ -30,11 +30,17 @@ column_names = [
 df = pd.DataFrame(columns=column_names)
 sorted_records = col.find().sort("Rank", 1).limit(20)
 
+blend_collections = ["Milady Maker", "Wrapped Cryptopunks", "Azuki"]
+
 for record in sorted_records:
+
+    name = record['name']
+    if name in blend_collections:
+        name += ' (B)'
 
     new_row = pd.DataFrame([{
         'Rank': record['Rank'],
-        'Name': record['name'],
+        'Name': name,
         '7D Vol ($)': record['volume_usd'],
         "Market Cap ($)": record['market_cap_usd'],
         "Floor (Ξ)": record['floor_price_eth'],
@@ -87,5 +93,6 @@ def display_nft_collection_ranking_table():
             ],
             style_header={'fontWeight': 'bold'},
         ),
+        html.P('(B) = Collection available on Blend (Blur lending)')
     ])
 
