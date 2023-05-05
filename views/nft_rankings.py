@@ -36,7 +36,7 @@ for record in sorted_records:
 
     name = record['name']
     if name in blend_collections:
-        name += ' (B)'
+        name += " (B)"
 
     new_row = pd.DataFrame([{
         'Rank': record['Rank'],
@@ -81,14 +81,23 @@ def display_nft_collection_ranking_table():
             },
             style_data_conditional=[
                 {
-                'if': {'column_id': 'Name'},
-                'textAlign': 'left',
+                    'if': {'column_id': 'Name'},
+                    'textAlign': 'left',
                 },
                 *[
                     {
                         'if': {'column_id': c, 'filter_query': '{{{}}} contains "("'.format(c)},
                         'color': 'red'
                     } for c in ["24H Floor Chg %", "7D Floor Chg %", "30D Floor Chg %"]        
+                ],
+                *[
+                    {
+                        'if': {'row_index': i, 'column_id': c},
+                        'backgroundColor': '#E0F0FF'
+                    }
+                    for i, row in df_table.iterrows()
+                    for c in df_table.columns
+                    if row["Name"].endswith("(B)")
                 ],
             ],
             style_header={'fontWeight': 'bold'},
