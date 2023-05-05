@@ -35,8 +35,6 @@ blend_collections = ["Milady Maker", "Wrapped Cryptopunks", "Azuki"]
 for record in sorted_records:
 
     name = record['name']
-    if name in blend_collections:
-        name += " (B)"
 
     new_row = pd.DataFrame([{
         'Rank': record['Rank'],
@@ -50,7 +48,8 @@ for record in sorted_records:
         "30D Floor Chg %": record['floor_change_30d'],
         "Total Supply": record['total_supply'],
         "Holders": record['holder_num'],
-    }], columns=column_names)
+        "Highlight": name in blend_collections,
+    }], columns=column_names + ["Highlight"])
 
     df = pd.concat([df, new_row], ignore_index=True)
 
@@ -95,13 +94,13 @@ def display_nft_collection_ranking_table():
                         'if': {'row_index': i, 'column_id': c},
                         'backgroundColor': '#E0F0FF'
                     }
-                    for i, row in df_table.iterrows()
+                    for i, row in df.iterrows()
                     for c in df_table.columns
-                    if row["Name"].endswith("(B)")
+                    if row["Highlight"]
                 ],
             ],
             style_header={'fontWeight': 'bold'},
         ),
-        html.P('(B) = Collection available on Blend (Blur lending)')
+        html.P("Blue highlighting indicates a collections inclusion on Blend (Blur's lending product)")
     ])
 
