@@ -27,7 +27,10 @@ column_names = [
     "Holders",
 ]
 
-df = pd.DataFrame(columns=column_names)
+# df = pd.DataFrame(columns=column_names)
+# df = pd.DataFrame(columns=column_names, dtype=object).astype({"Highlight": "bool"})
+df = pd.DataFrame(columns=column_names + ["Highlight"]).astype({"Highlight": "bool"})
+
 sorted_records = col.find().sort("Rank", 1).limit(20)
 
 blend_collections = ["Milady Maker", "Wrapped Cryptopunks", "Azuki"]
@@ -52,6 +55,8 @@ for record in sorted_records:
     }], columns=column_names + ["Highlight"])
 
     df = pd.concat([df, new_row], ignore_index=True)
+
+df = df.convert_dtypes()
 
 formatNum = lambda x: round(x, 2) if isinstance(x, (float)) else x
     

@@ -1,4 +1,5 @@
 from maindash import app
+from utilities.read_google_sheets import read_google_sheet
 from dash import html, dash_table
 import pymongo
 import pandas as pd
@@ -6,8 +7,8 @@ import os
 import datetime
 from dateutil.relativedelta import relativedelta
 from dotenv import load_dotenv
-
 load_dotenv()
+
 MONGODB_CONNECTION = os.getenv('MONGODB_CONNECTION')
 
 coinIds = ["yield-guild-games", "alethea-artificial-liquid-intelligence-token",
@@ -30,8 +31,19 @@ client = pymongo.MongoClient(MONGODB_CONNECTION)
 db = client["historical_price_data"]
 
 #  create a new dataframe for the table
-df_table = pd.DataFrame(columns=['Token', 'Cost Basis', 'Current', 'ROI', 'Prior Week', 'Prior Year', 'Weekly Change', 'YTD Change', 'YoY Change'])
+df_table = pd.DataFrame(columns=['Token', 'Cost Basis', 'Current', 'ROI', 'Tokens Vested', 'Tokens Vested ($)', 'Prior Week', 'Prior Year', 'Weekly Change', 'YTD Change', 'YoY Change'])
 
+# Pull token vesting data
+sheet_values = read_google_sheet()
+if sheet_values:
+    sheet_headers = sheet_values[0]
+    sheet_data = sheet_values[1:]
+    df_sheet = pd.DataFrame(sheet_data, columns=sheet_headers)
+else:
+    df_sheet = pd.DataFrame()
+
+print(df_sheet)
+                                
 today = datetime.date.today()
 day_of_year = today.timetuple().tm_yday
 one_week_ago = today - datetime.timedelta(days=7)
@@ -61,12 +73,21 @@ for index, coin in enumerate(coinIds):
     cb = costBasis.get(name) 
     roi = ((current_price - cb) / cb) * 100
 
-  
+    matching_row = df_sheet[df_sheet['Ticker'] == name]
+    if not matching_row.empty:
+        vested_tokens_percent = matching_row['Total Vested Token Accumulated (%)'].iloc[0]
+        vested_tokens_dollar = matching_row['Total Vested Token Accumulated ($)'].iloc[0]
+    else:
+        vested_tokens_percent = None
+        vested_tokens_dollar = None
+
     new_entry = {
         'Token': name,
         'Cost Basis': cb,
         'Current': current_price,
         'ROI': int(round(roi)),
+        'Tokens Vested': float(vested_tokens_percent) if vested_tokens_percent is not None else '-',
+        'Tokens Vested ($)': format('{:,.0f}'.format(float(vested_tokens_dollar))) if vested_tokens_dollar is not None else None,
         'Prior Week': prior_week_price,
         'Prior Year': prior_year_price,
         'Weekly Change': ((current_price - prior_week_price)/prior_week_price)*100,
@@ -78,18 +99,23 @@ for index, coin in enumerate(coinIds):
 
 formatNum = lambda x: round(x, 2) if isinstance(x, (float)) else x
 
-# For negative values, remove sign and add brackets. Add % symbol to relevant values 
 def formatCell(val, column):
+    # if val is None:
+    #     return '-' if column in ["Tokens Vested", "Tokens Vested ($)"] else None
     if isinstance(val, (int, float)) and val < 0:
-        return f'({abs(val)}{ "%" if column in ["ROI", "Weekly Change", "YTD Change", "YoY Change"] else ""})'
+        return f'({abs(val)}{ "%" if column in ["ROI", "Weekly Change", "YTD Change", "YoY Change", "Tokens Vested"] else ""})'
     elif isinstance(val, (int, float)):
-        return f'{val}{ "%" if column in ["ROI", "Weekly Change", "YTD Change", "YoY Change"] else ""}'
+        return f'{val}{ "%" if column in ["ROI", "Weekly Change", "YTD Change", "YoY Change", "Tokens Vested"] else ""}'
     else:
         return val
 
+print(df_table)
+
 df = df_table.applymap(formatNum).apply(lambda x: x.map(lambda y: formatCell(y, x.name)))
 
+print(df)
 def display_bit1_portfolio_table_usd():
+
     return html.Div([
         html.H4('BIT1 Portfolio ($ Denominated)', style={'text-align': 'left'}),
         dash_table.DataTable(

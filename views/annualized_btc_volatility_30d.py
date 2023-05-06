@@ -16,12 +16,12 @@ dxy = yf.Ticker("BTC-USD")
 hist = dxy.history(period="max")
 btc_data = hist.filter(regex="Close")
 
-# Calculate daily percentage change in BTC price
-btc_data["daily_pct_change"] = btc_data["Close"].pct_change()
-
-# Calculate rolling 30-day standard deviation
-btc_data["rolling_std"] = btc_data["daily_pct_change"].rolling(window=30).std()
-
+btc_data = btc_data.assign(
+    # Calculate daily percentage change in BTC price
+    daily_pct_change=btc_data["Close"].pct_change(),
+    # Calculate rolling 30-day standard deviation
+    rolling_std=btc_data["Close"].pct_change().rolling(window=30).std(),
+)
 # Annualize the volatility
 btc_data["annualized_volatility"] = btc_data["rolling_std"] * np.sqrt(365)
 
