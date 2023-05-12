@@ -77,7 +77,7 @@ def display_nft_collection_ranking_table():
     return html.Div([
         html.H4('Top NFT collections (7D Vol)', style={'text-align': 'left'}),
         dash_table.DataTable(
-            columns=[{"name": i, "id": i} for i in df_table.columns],
+            columns=[{"name": i, "id": i} for i in df_table.columns if i != "Highlight"],
             data=df_table.to_dict("records"),
             style_cell={
                 'textAlign': 'left' if column == 'Name' else 'center'
