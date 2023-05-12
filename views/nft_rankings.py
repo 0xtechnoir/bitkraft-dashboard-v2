@@ -33,7 +33,7 @@ df = pd.DataFrame(columns=column_names + ["Highlight"]).astype({"Highlight": "bo
 
 sorted_records = col.find().sort("Rank", 1).limit(20)
 
-blend_collections = ["Milady Maker", "Wrapped Cryptopunks", "Azuki"]
+blend_collections = ["Milady Maker", "Wrapped Cryptopunks", "Azuki", "DeGods"]
 
 for record in sorted_records:
 
