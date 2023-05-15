@@ -22,6 +22,7 @@ from views.btc import display_btc
 from views.eth import display_eth
 from views.crypto_price_performance_30d import display_crypto_price_performance_30d_chart
 from views.bit1_token_performance_table_usd import display_bit1_portfolio_table_usd
+from views.bit2_token_performance_table_usd import display_bit2_portfolio_table_usd
 from views.btc_pearson_correlation import display_btc_pearson_correlation
 from views.nft_rankings import display_nft_collection_ranking_table
 from views.iframe_test import display_iframe
@@ -70,6 +71,11 @@ app.layout = html.Div(
             dbc.Row(
                 [
                     dbc.Col(display_bit1_portfolio_table_usd(), width=8),
+                ],
+            ),
+            dbc.Row(
+                [
+                    dbc.Col(display_bit2_portfolio_table_usd(), width=8),
                 ],
             ),
             dbc.Row(
