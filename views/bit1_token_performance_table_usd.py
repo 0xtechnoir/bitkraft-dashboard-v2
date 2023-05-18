@@ -114,14 +114,21 @@ def display_bit1_portfolio_table_usd():
         dash_table.DataTable(
             columns=[{"name": i, "id": i} for i in df.columns],
             data=df.to_dict("records"),
-            style_cell={'textAlign': 'center'},
+            style_cell={
+                'textAlign': 'center',
+                'padding': '0px 15px'
+            },
             style_data_conditional=[
                 {
                     'if': {'column_id': c, 'filter_query': '{{{}}} contains "("'.format(c)},
                     'color': 'red'
                 } for c in ['ROI', 'Weekly Change', 'YTD Change', 'YoY Change']
             ],
-            style_header={'fontWeight': 'bold'},
+            style_header={
+                'fontWeight': 'bold',
+                'backgroundColor': '#46637f',
+                'color': 'white',
+            },
         ),
         html.P('Note: SUPER token option at $0.18 not yet executed')
     ])

@@ -40,53 +40,57 @@ jan_1st = datetime.date(today.year, 1, 1)
 one_year_ago = today - relativedelta(years=1)
 
 # Loop through the coinIds and create a dataframe for each coin
-# for index, coin in enumerate(coinIds):
-#     col = db[coinIds[index]]
-#     cursor = col.find({}, {"_id":0, "time":1, "usd_value":1})
-#     # Convert the cursor to a list of dictionaries, then to a dataframe
-#     li = list(cursor)
-#     df1 = pd.DataFrame(li)
-#     df1['date'] = pd.to_datetime(df1["time"], unit="ms")
-#     current_price = df1['usd_value'].iloc[-1]
+for index, coin in enumerate(coinIds):
+    col = db[coinIds[index]]
+    cursor = col.find({}, {"_id":0, "time":1, "usd_value":1})
+    # Convert the cursor to a list of dictionaries, then to a dataframe
+    li = list(cursor)
+    df1 = pd.DataFrame(li)
+    df1['date'] = pd.to_datetime(df1["time"], unit="ms")  
+    current_price = df1['usd_value'].iloc[-1]
+    print(df1)
+    print("Current Price: ", current_price, "type of: ", type(current_price) )
     
-#     prior_week_price_df = df1[df1['date'].dt.date == one_week_ago]
-#     prior_week_price = prior_week_price_df['usd_value'].iloc[0] if not prior_week_price_df.empty else None
+    prior_week_price_df = df1[df1['date'].dt.date == one_week_ago]
+    prior_week_price = prior_week_price_df['usd_value'].iloc[0] if not prior_week_price_df.empty else None
 
-#     ytd_price_df = df1[df1['date'].dt.date == jan_1st]
-#     ytd_price = ytd_price_df['usd_value'].iloc[0] if not ytd_price_df.empty else None
+    print("prior_week_price: ", prior_week_price, "type of: ", type(prior_week_price))
 
-#     prior_year_price_df = df1[df1['date'].dt.date == one_year_ago]
-#     prior_year_price = prior_year_price_df['usd_value'].iloc[0] if not prior_year_price_df.empty else None
+    ytd_price_df = df1[df1['date'].dt.date == jan_1st]
+    ytd_price = ytd_price_df['usd_value'].iloc[0] if not ytd_price_df.empty else None
+
+    prior_year_price_df = df1[df1['date'].dt.date == one_year_ago]
+    prior_year_price = prior_year_price_df['usd_value'].iloc[0] if not prior_year_price_df.empty else None
     
-#     name = labels[index]
-#     cb = costBasis.get(name) 
-#     roi = ((current_price - cb) / cb) * 100
+    name = labels[index]
+    cb = costBasis.get(name) 
+    roi = ((current_price - cb) / cb) * 100
 
-#     matching_row = df_sheet[df_sheet['Ticker'] == name]
-#     if not matching_row.empty:
-#         vested_tokens_percent = matching_row['Total Vested Token Accumulated (%)'].iloc[0]
-#         vested_tokens_dollar = matching_row['Total Vested Token Accumulated ($)'].iloc[0]
-#     else:
-#         vested_tokens_percent = None
-#         vested_tokens_dollar = None
+    matching_row = df_sheet[df_sheet['Ticker'] == name]
+    if not matching_row.empty:
+        vested_tokens_percent = matching_row['Total Vested Token Accumulated (%)'].iloc[0]
+        vested_tokens_dollar = matching_row['Total Vested Token Accumulated ($)'].iloc[0]
+    else:
+        vested_tokens_percent = None
+        vested_tokens_dollar = None
 
-#     new_entry = {
-#         'Token': name,
-#         'Cost Basis ($)': cb,
-#         'Current ($)': current_price,
-#         'ROI': int(round(roi)),
-#         'Vested': float(vested_tokens_percent) if vested_tokens_percent is not None else '-',
-#         'Vested ($)': format('{:,.0f}'.format(float(vested_tokens_dollar))) if vested_tokens_dollar is not None else '-',
-#         'Prior Week ($)': prior_week_price,
-#         'Prior Year ($)': prior_year_price,
-#         'Weekly Change': ((current_price - prior_week_price)/prior_week_price)*100,
-#         'YTD Change': ((current_price - ytd_price)/ytd_price)*100,
-#         'YoY Change': ((current_price - prior_year_price)/prior_year_price)*100 if prior_year_price != '-' else '-'
-#     }
+    new_entry = {
+        'Token': name,
+        'Cost Basis ($)': cb,
+        'Current ($)': current_price,
+        'ROI': int(round(roi)),
+        'Vested': float(vested_tokens_percent) if vested_tokens_percent is not None else '-',
+        'Vested ($)': format('{:,.0f}'.format(float(vested_tokens_dollar))) if vested_tokens_dollar is not None else '-',
+        'Prior Week ($)': prior_week_price if prior_week_price is not None else '-',
+        'Prior Year ($)': prior_year_price if prior_year_price is not None else '-',
+        'Weekly Change': ((current_price - prior_week_price)/prior_week_price)*100 if prior_week_price is not None else '-',
+        'YTD Change': ((current_price - ytd_price)/ytd_price)*100 if ytd_price is not None else '-',
+        'YoY Change': ((current_price - prior_year_price)/prior_year_price)*100 if prior_year_price is not None else '-'
+    }
 
-#     df_table.loc[labels[index]] = new_entry
+    df_table.loc[labels[index]] = new_entry
 
-formatNum = lambda x: round(x, 2) if isinstance(x, (float)) else x
+formatNum = lambda x: round(x, 4) if isinstance(x, (float)) else x
 
 def formatCell(val, column):
     if isinstance(val, (int, float)) and val < 0:
@@ -105,13 +109,20 @@ def display_bit2_portfolio_table_usd():
         dash_table.DataTable(
             columns=[{"name": i, "id": i} for i in df.columns],
             data=df.to_dict("records"),
-            style_cell={'textAlign': 'center'},
+            style_cell={
+                'textAlign': 'center',
+                'padding': '0px 15px'
+            },
             style_data_conditional=[
                 {
                     'if': {'column_id': c, 'filter_query': '{{{}}} contains "("'.format(c)},
                     'color': 'red'
                 } for c in ['ROI', 'Weekly Change', 'YTD Change', 'YoY Change']
             ],
-            style_header={'fontWeight': 'bold'},
+            style_header={
+                'fontWeight': 'bold',
+                'backgroundColor': '#46637f',
+                'color': 'white',
+            },
         ),
     ])
