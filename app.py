@@ -32,6 +32,7 @@ from views.fear_and_greed_index import display_fear_and_greed_chart
 from views.fed_liquidity_index import display_fed_liquidity_index_chart
 from views.annualized_btc_volatility_30d import display_btc_annualized_volatility_30d
 from views.bitcoin_volatility_index import display_btc_volatility_index
+from views.token_watchlist import display_token_watchlist
 
 server = app.server
 app.layout = html.Div(
@@ -76,6 +77,7 @@ app.layout = html.Div(
             dbc.Row(
                 [
                     dbc.Col(display_bit2_portfolio_table_usd(), width=8),
+                    dbc.Col(display_token_watchlist(), width=8),
                 ],
             ),
             dbc.Row(
