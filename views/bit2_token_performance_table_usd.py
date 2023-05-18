@@ -11,20 +11,11 @@ load_dotenv()
 
 MONGODB_CONNECTION = os.getenv('MONGODB_CONNECTION')
 
-coinIds = ["yield-guild-games", "alethea-artificial-liquid-intelligence-token",
-    "immutable-x", "rainbow-token-2", "superfarm", "matic-network", "sipher", "blackpool-token"]
-
-labels = ["YGG", "ALI", "IMX", "RBW", "SUPER", "MATIC", "SIPHER", "BPT"]
+coinIds = ["karate-combat"]
+labels = ["KARATE"]
 
 costBasis = {
-  "YGG": 0.047,
-  "ALI": 0.01,
-  "IMX": 0.0256,
-  "RBW": 0.0228,
-  "SUPER": 0.18,
-  "MATIC": 0.9,
-  "SIPHER": 0.06,
-  "BPT": 2.0,
+  "KARATE": 0.0005,
 }
 
 client = pymongo.MongoClient(MONGODB_CONNECTION)
@@ -55,11 +46,15 @@ for index, coin in enumerate(coinIds):
     # Convert the cursor to a list of dictionaries, then to a dataframe
     li = list(cursor)
     df1 = pd.DataFrame(li)
-    df1['date'] = pd.to_datetime(df1["time"], unit="ms")
+    df1['date'] = pd.to_datetime(df1["time"], unit="ms")  
     current_price = df1['usd_value'].iloc[-1]
+    print(df1)
+    print("Current Price: ", current_price, "type of: ", type(current_price) )
     
     prior_week_price_df = df1[df1['date'].dt.date == one_week_ago]
     prior_week_price = prior_week_price_df['usd_value'].iloc[0] if not prior_week_price_df.empty else None
+
+    print("prior_week_price: ", prior_week_price, "type of: ", type(prior_week_price))
 
     ytd_price_df = df1[df1['date'].dt.date == jan_1st]
     ytd_price = ytd_price_df['usd_value'].iloc[0] if not ytd_price_df.empty else None
@@ -86,16 +81,16 @@ for index, coin in enumerate(coinIds):
         'ROI': int(round(roi)),
         'Vested': float(vested_tokens_percent) if vested_tokens_percent is not None else '-',
         'Vested ($)': format('{:,.0f}'.format(float(vested_tokens_dollar))) if vested_tokens_dollar is not None else '-',
-        'Prior Week ($)': prior_week_price,
-        'Prior Year ($)': prior_year_price,
-        'Weekly Change': ((current_price - prior_week_price)/prior_week_price)*100,
-        'YTD Change': ((current_price - ytd_price)/ytd_price)*100,
-        'YoY Change': ((current_price - prior_year_price)/prior_year_price)*100 if prior_year_price != '-' else '-'
+        'Prior Week ($)': prior_week_price if prior_week_price is not None else '-',
+        'Prior Year ($)': prior_year_price if prior_year_price is not None else '-',
+        'Weekly Change': ((current_price - prior_week_price)/prior_week_price)*100 if prior_week_price is not None else '-',
+        'YTD Change': ((current_price - ytd_price)/ytd_price)*100 if ytd_price is not None else '-',
+        'YoY Change': ((current_price - prior_year_price)/prior_year_price)*100 if prior_year_price is not None else '-'
     }
 
     df_table.loc[labels[index]] = new_entry
 
-formatNum = lambda x: round(x, 2) if isinstance(x, (float)) else x
+formatNum = lambda x: round(x, 4) if isinstance(x, (float)) else x
 
 def formatCell(val, column):
     if isinstance(val, (int, float)) and val < 0:
@@ -107,10 +102,10 @@ def formatCell(val, column):
 
 df = df_table.applymap(formatNum).apply(lambda x: x.map(lambda y: formatCell(y, x.name)))
 
-def display_bit1_portfolio_table_usd():
+def display_bit2_portfolio_table_usd():
 
     return html.Div([
-        html.H4('BIT1 Portfolio ($ Denominated)', style={'text-align': 'left'}),
+        html.H4('BIT2 Portfolio ($ Denominated)', style={'text-align': 'left'}),
         dash_table.DataTable(
             columns=[{"name": i, "id": i} for i in df.columns],
             data=df.to_dict("records"),
@@ -130,5 +125,4 @@ def display_bit1_portfolio_table_usd():
                 'color': 'white',
             },
         ),
-        html.P('Note: SUPER token option at $0.18 not yet executed')
     ])
