@@ -88,7 +88,11 @@ app.layout = html.Div(
             ),
             dbc.Row(
                 [                 
-                    dbc.Col(display_btc_pearson_correlation(), width=6),
+                    dbc.Col(display_btc_pearson_correlation(), width=8),
+                ],
+            ),
+             dbc.Row(
+                [                 
                     dbc.Col(display_fear_and_greed_chart(), width=6)
                 ],
             ),

@@ -33,7 +33,21 @@ df = pd.DataFrame(columns=column_names + ["Highlight"]).astype({"Highlight": "bo
 
 sorted_records = col.find().sort("Rank", 1).limit(20)
 
-blend_collections = ["Milady Maker", "Wrapped Cryptopunks", "Azuki", "DeGods"]
+blend_collections = [
+    "Milady Maker", 
+    "Wrapped Cryptopunks", 
+    "Azuki", 
+    "DeGods", 
+    "Mutant Ape Yacht Club", 
+    "Bored Ape Yacht Club",
+    "Kanpai Pandas",
+    "Redacted Remilio Babies",
+    "Pudgy Penguins",
+    "Otherdeed",
+    "Bored Ape Kennel Club",
+    "CLONE X - X TAKASHI MURAKAMI",
+    "BEANZ Official"
+]
 
 for record in sorted_records:
 
@@ -104,7 +118,11 @@ def display_nft_collection_ranking_table():
                     if row["Highlight"]
                 ],
             ],
-            style_header={'fontWeight': 'bold'},
+            style_header={
+                'fontWeight': 'bold',
+                'backgroundColor': '#46637f',
+                'color': 'white',
+            },
         ),
         html.P("Blue highlighting indicates a collections inclusion on Blend (Blur's lending product)")
     ])
