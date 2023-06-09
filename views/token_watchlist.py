@@ -61,6 +61,10 @@ df['Circ'] = df['Circ'].apply(lambda x: str(int(x)) + '%' if pd.notna(x) and isi
 # Finally, convert any null values to a '-'
 df = df.fillna('-')
 
+# Split the dataframe into two based on 'FDV ($)' value
+df_top_10 = df.iloc[:10]  # Top 10 records
+df_rest = df.iloc[10:]    # The remaining records
+
 def display_token_watchlist():
     
     column_styles = []
@@ -79,27 +83,27 @@ def display_token_watchlist():
                 'color': 'black'
             })
 
-    # Define your columns here
-    columns = [
-        {"name": ["", "Ticker"], "id": "Ticker"},
-        {"name": ["", "Price ($)"], "id": "Price ($)"},
-        {"name": ["", "24H Vol ($)"], "id": "24H Vol ($)"},
-        {"name": ["Change", "24H"], "id": "24H"},
-        {"name": ["Change", "7D"], "id": "7D"},
-        {"name": ["Change", "30D"], "id": "30D"},
-        {"name": ["Change", "3M"], "id": "3M"},
-        {"name": ["Change", "6M"], "id": "6M"},
-        {"name": ["", "MC ($)"], "id": "MC ($)"},
-        {"name": ["", "FDV ($)"], "id": "FDV ($)"},
-        {"name": ["Supply", "Circ. Supply"], "id": "Circ. Supply"},
-        {"name": ["Supply", "Total Supply"], "id": "Total Supply"},
-        {"name": ["Supply", "Max Supply"], "id": "Max Supply"},
-        {"name": ["Supply", "Circ"], "id": "Circ"},
-    ]
 
-    return html.Div([
-        html.H4('Token Watchlist', style={'text-align': 'left'}),
-        dash_table.DataTable(
+    def create_data_table(df):
+
+        columns = [
+            {"name": ["", "Ticker"], "id": "Ticker"},
+            {"name": ["", "Price ($)"], "id": "Price ($)"},
+            {"name": ["", "24H Vol ($)"], "id": "24H Vol ($)"},
+            {"name": ["Change", "24H"], "id": "24H"},
+            {"name": ["Change", "7D"], "id": "7D"},
+            {"name": ["Change", "30D"], "id": "30D"},
+            {"name": ["Change", "3M"], "id": "3M"},
+            {"name": ["Change", "6M"], "id": "6M"},
+            {"name": ["", "MC ($)"], "id": "MC ($)"},
+            {"name": ["", "FDV ($)"], "id": "FDV ($)"},
+            {"name": ["Supply", "Circ. Supply"], "id": "Circ. Supply"},
+            {"name": ["Supply", "Total Supply"], "id": "Total Supply"},
+            {"name": ["Supply", "Max Supply"], "id": "Max Supply"},
+            {"name": ["Supply", "Circ"], "id": "Circ"},
+        ]
+
+        return dash_table.DataTable(
             columns=columns,
             data=df.to_dict("records"),
             style_cell={
@@ -130,7 +134,7 @@ def display_token_watchlist():
                 } for c in ['24H', '7D', '30D', '3M', '6M', 'Circ. Supply', 'Total Supply', 'Max Supply', 'Circ']
             ] 
             + [
-                 {
+                {
                     'if': {
                         'column_id': c,
                     },
@@ -140,7 +144,7 @@ def display_token_watchlist():
                 } for c in ['Ticker', 'Price ($)', '24H Vol ($)', 'MC ($)', 'FDV ($)']
             ]
             + [
-                 {
+                {
                     'if': {
                         'column_id': c,
                         'header_index': 1
@@ -150,7 +154,13 @@ def display_token_watchlist():
                 } for c in ['24H', '7D', '30D', '3M', '6M', 'Circ. Supply', 'Total Supply', 'Max Supply', 'Circ']
             ],
             merge_duplicate_headers=True,
-        ),
+        )
+
+    return html.Div([
+        html.H4('Token Watchlist (Top 10 FDV)', style={'text-align': 'left'}),
+        create_data_table(df_top_10),
+        html.H4('Speculative Token Watchlist (by FDV)', style={'text-align': 'left'}),
+        create_data_table(df_rest),
     ])
 
 
