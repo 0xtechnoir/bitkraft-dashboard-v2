@@ -45,6 +45,11 @@ app.layout = html.Div(
                 ],
             ),
             dbc.Row(
+                [                 
+                    dbc.Col(display_fed_liquidity_index_chart(), width=6),
+                ],
+            ),
+            dbc.Row(
                 [
                     dbc.Col(display_gold(), width=4),
                     dbc.Col(display_ftse(), width=4),
@@ -66,7 +71,6 @@ app.layout = html.Div(
             dbc.Row(
                 [
                     dbc.Col(display_bit1_portfolio(), width=8),
-                    dbc.Col(display_btc(), width=4),
                 ],
             ),
             dbc.Row(
@@ -82,8 +86,13 @@ app.layout = html.Div(
             ),
             dbc.Row(
                 [                 
-                    dbc.Col(display_eth(), width=4),
                     dbc.Col(display_crypto_price_performance_30d_chart(), width=8),
+                ],
+            ),
+            dbc.Row(
+                [                 
+                    dbc.Col(display_btc(), width=4),
+                    dbc.Col(display_eth(), width=4),
                 ],
             ),
             dbc.Row(
@@ -98,25 +107,14 @@ app.layout = html.Div(
             ),
             dbc.Row(
                 [                 
-                    dbc.Col(display_nft_collection_ranking_table(), width=8),
-                    
+                    dbc.Col(display_btc_annualized_volatility_30d(), width=6),
+                    dbc.Col(display_btc_volatility_index(), width=6),
                 ],
             ),
-             dbc.Row(
+            dbc.Row(
                 [                 
                     dbc.Col(display_btc_futures_agg_open_interest_chart(), width=6),
                     dbc.Col(display_eth_futures_agg_open_interest_chart(), width=6),
-                ],
-            ),
-            dbc.Row(
-                [                 
-                    dbc.Col(display_fed_liquidity_index_chart(), width=6),
-                ],
-            ),
-            dbc.Row(
-                [                 
-                    dbc.Col(display_btc_annualized_volatility_30d(), width=6),
-                    dbc.Col(display_btc_volatility_index(), width=6),
                 ],
             ),
             dbc.Row(
@@ -157,6 +155,12 @@ app.layout = html.Div(
                            title="ETH Put/Call Ratio"
                         ), width=6
                     ),
+                ],
+            ),
+            dbc.Row(
+                [                 
+                    dbc.Col(display_nft_collection_ranking_table(), width=8),
+                    
                 ],
             ),
             dbc.Row(
