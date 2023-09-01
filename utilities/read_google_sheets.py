@@ -6,14 +6,12 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-def read_google_sheet():
+def read_google_sheet(sheet_id, range):
 
     # If modifying these scopes, delete the file token.json.
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
     # The ID and range of a sample spreadsheet.
-    SPREADSHEET_ID = '1SErwWwF7tKbkydZn8LhVXkkf0dRCBDCOX8H2V8qzy4E'
-    RANGE = 'Vesting Table for Market Report!A1:E10'
     CREDS_FILE = 'google_sheets_credentials.json'
 
     creds = None
@@ -39,8 +37,8 @@ def read_google_sheet():
 
         # Call the Sheets API
         sheet = service.spreadsheets()
-        result = sheet.values().get(spreadsheetId=SPREADSHEET_ID,
-                                    range=RANGE).execute()
+        result = sheet.values().get(spreadsheetId=sheet_id,
+                                    range=range).execute()
         values = result.get('values', [])
 
         if not values:

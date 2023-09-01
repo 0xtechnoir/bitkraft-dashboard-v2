@@ -25,7 +25,9 @@ db = client["historical_price_data"]
 df_table = pd.DataFrame(columns=['Token', 'Cost Basis ($)', 'Current ($)', 'ROI', 'Vested', 'Vested ($)', 'Prior Week ($)', 'Prior Year ($)', 'Weekly Change', 'YTD Change', 'YoY Change'])
 
 # Pull token vesting data
-sheet_values = read_google_sheet()
+sheet_id = '1SErwWwF7tKbkydZn8LhVXkkf0dRCBDCOX8H2V8qzy4E'
+range = 'Vesting Table for Market Report!A1:E10'
+sheet_values = read_google_sheet(sheet_id, range)
 if sheet_values:
     sheet_headers = sheet_values[0]
     sheet_data = sheet_values[1:]
@@ -47,21 +49,13 @@ for index, coin in enumerate(coinIds):
     li = list(cursor)
     df1 = pd.DataFrame(li)
     df1['date'] = pd.to_datetime(df1["time"], unit="ms")  
-    current_price = df1['usd_value'].iloc[-1]
-    print(df1)
-    print("Current Price: ", current_price, "type of: ", type(current_price) )
-    
+    current_price = df1['usd_value'].iloc[-1]    
     prior_week_price_df = df1[df1['date'].dt.date == one_week_ago]
     prior_week_price = prior_week_price_df['usd_value'].iloc[0] if not prior_week_price_df.empty else None
-
-    print("prior_week_price: ", prior_week_price, "type of: ", type(prior_week_price))
-
     ytd_price_df = df1[df1['date'].dt.date == jan_1st]
     ytd_price = ytd_price_df['usd_value'].iloc[0] if not ytd_price_df.empty else None
-
     prior_year_price_df = df1[df1['date'].dt.date == one_year_ago]
     prior_year_price = prior_year_price_df['usd_value'].iloc[0] if not prior_year_price_df.empty else None
-    
     name = labels[index]
     cb = costBasis.get(name) 
     roi = ((current_price - cb) / cb) * 100

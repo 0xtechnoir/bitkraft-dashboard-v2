@@ -13,9 +13,9 @@ load_dotenv()
 MONGODB_CONNECTION = os.getenv('MONGODB_CONNECTION')
 
 coinIds = ["yield-guild-games", "alethea-artificial-liquid-intelligence-token",
-    "immutable-x", "rainbow-token-2", "superfarm", "matic-network", "sipher", "blackpool-token"]
+    "immutable-x", "rainbow-token-2", "superfarm", "matic-network", "sipher", "blackpool-token", "vcore"]
 
-labels = ["YGG", "ALI", "IMX", "RBW", "SUPER", "MATIC", "SIPHER", "BPT"]
+labels = ["YGG", "ALI", "IMX", "RBW", "SUPER", "MATIC", "SIPHER", "BPT", "VCORE"]
 
 client = pymongo.MongoClient(MONGODB_CONNECTION)
 db = client["historical_price_data"]
@@ -51,8 +51,6 @@ def display_bit1_portfolio():
             config={"displayModeBar": False},
         ),
     ])
-
-
 
 @app.callback(
     Output("bit1_portfolio_fig", "figure"),
