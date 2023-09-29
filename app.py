@@ -18,6 +18,7 @@ from views.nasaq import display_nasdaq
 from views.hangseng import display_hangseng
 from views.gaming_equities import display_gaming_equities
 from views.bit1_portfolio import display_bit1_portfolio
+from views.bit2_portfolio import display_bit2_portfolio
 from views.btc import display_btc
 from views.eth import display_eth
 from views.crypto_price_performance_30d import display_crypto_price_performance_30d_chart
@@ -25,19 +26,32 @@ from views.bit1_token_performance_table_usd import display_bit1_portfolio_table_
 from views.bit2_token_performance_table_usd import display_bit2_portfolio_table_usd
 from views.btc_pearson_correlation import display_btc_pearson_correlation
 from views.nft_rankings import display_nft_collection_ranking_table
-from views.iframe_test import display_iframe
+from views.monthly_Web3_Gamers import monthly_web3_gamers
+from views.weekly_web3_gaming_vol import weekly_web3_gaming_vol
+from views.top_web3_games import top_web3_games
 from views.btc_futures_aggregated_open_interest import display_btc_futures_agg_open_interest_chart
 from views.eth_futures_aggregated_open_interest import display_eth_futures_agg_open_interest_chart
 from views.fear_and_greed_index import display_fear_and_greed_chart
+from views.fear_and_greed_meter import display_fear_and_greed_meter
 from views.fed_liquidity_index import display_fed_liquidity_index_chart
 from views.annualized_btc_volatility_30d import display_btc_annualized_volatility_30d
-from views.bitcoin_volatility_index import display_btc_volatility_index
 from views.token_watchlist import display_token_watchlist
 from views.bit2_liquid_investments_table import display_bit2_liquid_investments
+from views.temp_token_chart import display_temp_token_chart
 
 server = app.server
 app.layout = html.Div(
         [
+            dbc.Row(
+                [                 
+                    dbc.Col(
+                        [
+                            html.Button('Generate PDF', id='generate-pdf-button'),
+                            html.Div(id='generate-pdf-result'),
+                        ]
+                    ),
+                ],
+            ),
             dbc.Row(
                 [
                     dbc.Col(display_treasury_yield_curve(), width=4, style={'height': '100%', 'overflow': 'auto'}),
@@ -72,6 +86,12 @@ app.layout = html.Div(
             dbc.Row(
                 [
                     dbc.Col(display_bit1_portfolio(), width=8),
+                    dbc.Col(display_bit2_portfolio(), width=8),
+                ],
+            ),
+            dbc.Row(
+                [
+                    dbc.Col(display_temp_token_chart(), width=4),
                 ],
             ),
             dbc.Row(
@@ -110,15 +130,44 @@ app.layout = html.Div(
                     dbc.Col(display_btc_pearson_correlation(), width=8),
                 ],
             ),
+            dbc.Row(
+                [                 
+                    dbc.Col(
+                        html.Iframe(
+                           width="100%", 
+                           height="420", 
+                           src="https://www.theblock.co/data/crypto-markets/spot/cryptocurrency-exchange-volume-monthly/embed",
+                           title="Cryptocurrency Monthly Exchange Volume"
+                        ), width=4
+                    ),
+                    dbc.Col(
+                        html.Iframe(
+                           width="100%", 
+                           height="420", 
+                           src="https://www.theblock.co/data/crypto-markets/spot/total-exchange-volume-daily/embed",
+                           title="Daily Exchange Volume (7DMA)"
+                        ), width=4
+                    ),
+                    dbc.Col(
+                        html.Iframe(
+                           width="100%", 
+                           height="420", 
+                           src="https://www.theblock.co/data/crypto-markets/spot/usd-support-exchange-volume/embed",
+                           title="USD Support Exchange Volume"
+                        ), width=4
+                    ),
+                ],
+            ),
              dbc.Row(
                 [                 
-                    dbc.Col(display_fear_and_greed_chart(), width=6)
+                    dbc.Col(display_fear_and_greed_chart(), width=8),
+                    dbc.Col(display_fear_and_greed_meter(), width=4)
+
                 ],
             ),
             dbc.Row(
                 [                 
                     dbc.Col(display_btc_annualized_volatility_30d(), width=6),
-                    dbc.Col(display_btc_volatility_index(), width=6),
                 ],
             ),
             dbc.Row(
@@ -170,21 +219,25 @@ app.layout = html.Div(
             dbc.Row(
                 [                 
                     dbc.Col(display_nft_collection_ranking_table(), width=8),
-                    
                 ],
             ),
             dbc.Row(
                 [                 
-                    dbc.Col(
-                        [
-                            html.Button('Generate PDF', id='generate-pdf-button'),
-                            html.Div(id='generate-pdf-result'),
-                        ]
-                    ),
-                    dbc.Col(display_iframe())
+                    dbc.Col(weekly_web3_gaming_vol())
                 ],
             ),
-        ]
+            dbc.Row(
+                [                 
+                    dbc.Col(monthly_web3_gamers())
+                ],
+            ),
+            dbc.Row(
+                [                 
+                    dbc.Col(top_web3_games())
+                ],
+            ),
+        ],
+        style={'backgroundColor': '#FFFFFF'}
     )
 
 # Create a callback function to trigger the Flask endpoint

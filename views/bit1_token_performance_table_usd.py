@@ -88,13 +88,13 @@ for index, coin in enumerate(coinIds):
 
     new_entry = {
         'Token': name,
-        'Cost Basis ($)': cb,
+        'Cost Basis ($)': '{:,.3f}'.format(cb),
         'Current ($)': '{:,.3f}'.format(current_price),
         'ROI': int(round(roi)),
         'Vested': float(vested_tokens_percent) if vested_tokens_percent is not None else '-',
         'Vested ($)': format('{:,.0f}'.format(float(vested_tokens_dollar))) if vested_tokens_dollar is not None else '-',
-        'Prior Week ($)': prior_week_price if prior_week_price is not None else '-',
-        'Prior Year ($)': prior_year_price if prior_year_price is not None else '-',
+        'Prior Week ($)': '{:,.3f}'.format(prior_week_price) if prior_week_price is not None else '-',
+        'Prior Year ($)': '{:,.3f}'.format(prior_year_price) if prior_year_price is not None else '-',
         'Weekly Change': ((current_price - prior_week_price)/prior_week_price)*100 if prior_week_price is not None else '-',
         'YTD Change': ((current_price - ytd_price)/ytd_price)*100 if ytd_price is not None else '-',
         'YoY Change': ((current_price - prior_year_price)/prior_year_price)*100 if prior_year_price is not None else '-'

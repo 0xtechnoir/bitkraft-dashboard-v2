@@ -94,5 +94,5 @@ def update_chart():
             title=""
         )
     )
-    
+    fig.add_hline(y=0, line_dash="dash", line_color="black", line_width=0.5, opacity=0.7)
     return fig

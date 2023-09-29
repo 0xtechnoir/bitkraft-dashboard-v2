@@ -19,12 +19,18 @@ url = "https://min-api.cryptocompare.com/data/index/histo/day?indexName=BVIN&lim
 
 response = requests.get(url)
 if response.status_code == 200:
-    data = response.json()
-    df = pd.DataFrame(data['Data'])
-    # Remove any rows containing '0' values
-    df = df[df.ne(0).all(axis=1)]
-    df['time'] = pd.to_datetime(df['time'], unit='s')
-    df.set_index('time', inplace=True)
+    try:
+        print("response.status_code", response.status_code)
+        data = response.json()
+        print("xxxxxxxxxxdata", data)
+        df = pd.DataFrame(data['Data'])
+        # Remove any rows containing '0' values
+        print("xxxxxxxxxx", df)
+        df = df[df.ne(0).all(axis=1)]
+        df['time'] = pd.to_datetime(df['time'], unit='s')
+        df.set_index('time', inplace=True)
+    except:
+        print("Error:", response.status_code, response.text)
 else:
     print("Error:", response.status_code, response.text)
 
