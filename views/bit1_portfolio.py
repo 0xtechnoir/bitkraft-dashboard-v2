@@ -127,6 +127,14 @@ def update_chart(update):
                             label="1y",
                             step="year",
                             stepmode="backward"),
+                        dict(count=2,
+                            label="2y",
+                            step="year",
+                            stepmode="backward"),
+                        dict(count=3,
+                            label="3y",
+                            step="year",
+                            stepmode="backward"),
                         dict(step="all")
                     ])
                 ),

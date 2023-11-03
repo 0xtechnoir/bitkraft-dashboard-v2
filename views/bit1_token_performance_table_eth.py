@@ -51,13 +51,6 @@ for index, coin in enumerate(coinIds):
 
     df_table.loc[labels[index]] = new_entry
 
-# def format_dynamic_decimal(value):
-#     if isinstance(value, (int, float)):
-#         # Remove trailing zeros and decimal point if not necessary
-#         formatted_value = ("{:.10f}".format(value)).rstrip("0").rstrip(".")
-#         return formatted_value
-#     else:
-#         return value
 pd.set_option('display.float_format', lambda x: '%.3f' % x)
 
 def format_dynamic_decimal(value):
@@ -86,7 +79,6 @@ def apply_brackets(val):
     else:
         return val
     
-# df = df_table.applymap(round_to_1).applymap(apply_brackets)
 df = df_table.applymap(format_dynamic_decimal).applymap(apply_brackets)
 print(df)
 

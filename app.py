@@ -37,7 +37,6 @@ from views.fed_liquidity_index import display_fed_liquidity_index_chart
 from views.annualized_btc_volatility_30d import display_btc_annualized_volatility_30d
 from views.token_watchlist import display_token_watchlist
 from views.bit2_liquid_investments_table import display_bit2_liquid_investments
-from views.temp_token_chart import display_temp_token_chart
 
 server = app.server
 app.layout = html.Div(
@@ -54,10 +53,11 @@ app.layout = html.Div(
             ),
             dbc.Row(
                 [
-                    dbc.Col(display_treasury_yield_curve(), width=4, style={'height': '100%', 'overflow': 'auto'}),
-                    dbc.Col(display_dxy(), width=4, style={'height': '100%', 'overflow': 'auto'}),
-                    dbc.Col(display_brent(), width=4, style={'height': '100%', 'overflow': 'auto'})
+                    dbc.Col(display_treasury_yield_curve(), width=4, className='p-0', style={'height': '100%', 'overflow': 'auto'}),
+                    dbc.Col(display_dxy(), width=4, className='p-0', style={'height': '100%', 'overflow': 'auto'}),
+                    dbc.Col(display_brent(), width=4, className='p-0', style={'height': '100%', 'overflow': 'auto'})
                 ],
+                className='my-0'
             ),
             dbc.Row(
                 [                 
@@ -86,17 +86,16 @@ app.layout = html.Div(
             dbc.Row(
                 [
                     dbc.Col(display_bit1_portfolio(), width=8),
-                    dbc.Col(display_bit2_portfolio(), width=8),
-                ],
-            ),
-            dbc.Row(
-                [
-                    dbc.Col(display_temp_token_chart(), width=4),
                 ],
             ),
             dbc.Row(
                 [
                     dbc.Col(display_bit1_portfolio_table_usd(), width=8),
+                ],
+            ),
+            dbc.Row(
+                [
+                    dbc.Col(display_bit2_portfolio(), width=8),
                 ],
             ),
             dbc.Row(
@@ -167,7 +166,7 @@ app.layout = html.Div(
             ),
             dbc.Row(
                 [                 
-                    dbc.Col(display_btc_annualized_volatility_30d(), width=6),
+                    dbc.Col(display_btc_annualized_volatility_30d(), width=12),
                 ],
             ),
             dbc.Row(
