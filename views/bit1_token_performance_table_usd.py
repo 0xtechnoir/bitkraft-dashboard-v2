@@ -32,11 +32,11 @@ client = pymongo.MongoClient(MONGODB_CONNECTION)
 db = client["historical_price_data"]
 
 #  create a new dataframe for the table
-df_table = pd.DataFrame(columns=['Token', 'Cost Basis ($)', 'Current ($)', 'ROI', 'Vested', 'Vested ($)', 'Prior Week ($)', 'Prior Year ($)', 'Weekly Change', 'YTD Change', 'YoY Change'])
+df_table = pd.DataFrame(columns=['Token', 'Cost Basis ($)', 'Current ($)', 'Vested', 'Realized ($)', 'Unrealized ($)', 'Prior Week ($)', 'Prior Year ($)', 'Weekly Change', 'YTD Change', 'YoY Change', 'ROI'])
 
 # Pull token vesting data
 sheet_id = '1SErwWwF7tKbkydZn8LhVXkkf0dRCBDCOX8H2V8qzy4E'
-range = 'Vesting Table for Market Report!A1:E10'
+range = 'Vesting Table for Market Report!A1:E9'
 sheet_values = read_google_sheet(sheet_id, range)
 if sheet_values:
     sheet_headers = sheet_values[0]
@@ -80,24 +80,27 @@ for index, coin in enumerate(coinIds):
 
     matching_row = df_sheet[df_sheet['Ticker'] == name]
     if not matching_row.empty:
-        vested_tokens_percent = matching_row['Total Vested Token Accumulated (%)'].iloc[0]
-        vested_tokens_dollar = matching_row['Total Vested Token Accumulated ($)'].iloc[0]
+        vested = matching_row['Vested'].iloc[0]
+        realised = matching_row['Realized'].iloc[0]
+        unrealised = matching_row['Unrealized'].iloc[0]
     else:
-        vested_tokens_percent = None
-        vested_tokens_dollar = None
+        vested = None
+        realised = None
+        unrealised = None
 
     new_entry = {
         'Token': name,
         'Cost Basis ($)': '{:,.3f}'.format(cb),
         'Current ($)': '{:,.3f}'.format(current_price),
-        'ROI': int(round(roi)),
-        'Vested': float(vested_tokens_percent) if vested_tokens_percent is not None else '-',
-        'Vested ($)': format('{:,.0f}'.format(float(vested_tokens_dollar))) if vested_tokens_dollar is not None else '-',
+        'Vested': float(vested)*100 if vested is not None else '-',
+        'Realized ($)': '{:,.0f}'.format(float(realised)) if realised is not None else '-',
+        'Unrealized ($)': '{:,.0f}'.format(float(unrealised)) if unrealised is not None else '-',
         'Prior Week ($)': '{:,.3f}'.format(prior_week_price) if prior_week_price is not None else '-',
         'Prior Year ($)': '{:,.3f}'.format(prior_year_price) if prior_year_price is not None else '-',
         'Weekly Change': ((current_price - prior_week_price)/prior_week_price)*100 if prior_week_price is not None else '-',
         'YTD Change': ((current_price - ytd_price)/ytd_price)*100 if ytd_price is not None else '-',
-        'YoY Change': ((current_price - prior_year_price)/prior_year_price)*100 if prior_year_price is not None else '-'
+        'YoY Change': ((current_price - prior_year_price)/prior_year_price)*100 if prior_year_price is not None else '-',
+        'ROI': int(round(roi)),
     }
 
     df_table.loc[labels[index]] = new_entry

@@ -14,19 +14,15 @@ MONGODB_CONNECTION = os.getenv('MONGODB_CONNECTION')
 coinIds = ["karate-combat"]
 labels = ["KARATE"]
 
-costBasis = {
-  "KARATE": 0.0005,
-}
-
 client = pymongo.MongoClient(MONGODB_CONNECTION)
 db = client["historical_price_data"]
 
 #  create a new dataframe for the table
-df_table = pd.DataFrame(columns=['Token', 'Tokens Held', 'Avg. Token Price ($)','Cost Basis ($)', 'Current Value ($)', 'ROI'])
+df_table = pd.DataFrame(columns=['Token', 'Cost Basis ($)', 'Current ($)', 'Tokens Held', 'Realized ($)', 'Unrealized ($)', 'Prior Week ($)', 'Prior Year ($)', 'Weekly Change', 'YTD Change', 'YoY Change', 'ROI'])
 
 # Pull liquid token data
 sheetId = '1wm5Whcdxm7FDBsNeQsJqXtPXJ7tDf6JrjY3EDBlQZPU'
-range = 'Market Report - Liquid Investment Tables!A1:D2'
+range = 'Market Report!A11:G12'
 sheet_values = read_google_sheet(sheetId, range)
 if sheet_values:
     sheet_headers = sheet_values[0]
@@ -42,7 +38,13 @@ cursor = col.find({}, {"_id":0, "time":1, "usd_value":1})
 li = list(cursor)
 df1 = pd.DataFrame(li)
 df1['date'] = pd.to_datetime(df1["time"], unit="ms")
-current_price = df1['usd_value'].iloc[-1]
+
+
+today = datetime.date.today()
+day_of_year = today.timetuple().tm_yday
+one_week_ago = today - datetime.timedelta(days=7)
+jan_1st = datetime.date(today.year, 1, 1)
+one_year_ago = today - relativedelta(years=1)
 
 # map the values from sheet_df to the df_table
 for index, row in sheet_df.iterrows():
@@ -52,16 +54,39 @@ for index, row in sheet_df.iterrows():
 
     token_price_at_cost = float(row['avg_token_price'])
     value_at_cost = int(row['cost_basis'])
+    current_price = df1['usd_value'].iloc[-1]    
     roi = ((current_price - token_price_at_cost) / token_price_at_cost) * 100
     current_value = int(current_price*tokens_held) if current_price is not None else '-'
 
+    prior_week_price_df = df1[df1['date'].dt.date == one_week_ago]
+    prior_week_price = prior_week_price_df['usd_value'].iloc[0] if not prior_week_price_df.empty else None
+    ytd_price_df = df1[df1['date'].dt.date == jan_1st]
+    ytd_price = ytd_price_df['usd_value'].iloc[0] if not ytd_price_df.empty else None
+    prior_year_price_df = df1[df1['date'].dt.date == one_year_ago]
+    prior_year_price = prior_year_price_df['usd_value'].iloc[0] if not prior_year_price_df.empty else None
+
+
+    matching_row = sheet_df[sheet_df['Ticker'] == name]
+    if not matching_row.empty:
+        realised = matching_row['Realized'].iloc[0]
+        unrealised = matching_row['Unrealized'].iloc[0]
+    else:
+        realised = None
+        unrealised = None
+
     new_entry = {
         'Token': name,
+        'Cost Basis ($)': "{:,.7f}".format(token_price_at_cost),
+        'Current ($)': '{:,.5f}'.format(current_price),
         'Tokens Held': "{:,}".format(tokens_held),
-        'Avg. Token Price ($)': "{:,.7f}".format(token_price_at_cost),
-        'Cost Basis ($)': "{:,}".format(value_at_cost),
-        'Current Value ($)': "{:,}".format(current_value),
-        'ROI': int(round(roi))
+        'Realized ($)': '{:,.0f}'.format(float(realised)) if realised is not None else '-',
+        'Unrealized ($)': '{:,.0f}'.format(float(unrealised)) if unrealised is not None else '-',
+        'Prior Week ($)': '{:,.5f}'.format(prior_week_price) if prior_week_price is not None else '-',
+        'Prior Year ($)': '{:,.5f}'.format(prior_year_price) if prior_year_price is not None else '-',
+        'Weekly Change': ((current_price - prior_week_price)/prior_week_price)*100 if prior_week_price is not None else '-',
+        'YTD Change': ((current_price - ytd_price)/ytd_price)*100 if ytd_price is not None else '-',
+        'YoY Change': ((current_price - prior_year_price)/prior_year_price)*100 if prior_year_price is not None else '-',
+        'ROI': int(round(roi)),
     }
 
     df_table.loc[labels[index]] = new_entry
