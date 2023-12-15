@@ -49,6 +49,7 @@ def display_bit1_portfolio():
         dcc.Graph(
             id="bit1_portfolio_fig", 
             config={"displayModeBar": False},
+            style={'height': 700} 
         ),
     ])
 
