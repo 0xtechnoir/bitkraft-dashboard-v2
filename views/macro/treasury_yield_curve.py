@@ -1,11 +1,11 @@
-from dash import dcc
-from dash import html
+from dash import dcc, html
 import pandas as pd
 import pymongo
-import plotly.express as px
+import plotly.graph_objs as go
 import os
 from dotenv import load_dotenv
 
+# Load environment variables and connect to MongoDB
 load_dotenv()
 MONGODB_CONNECTION = os.getenv('MONGODB_CONNECTION')
 
@@ -49,30 +49,37 @@ df = pd.DataFrame(d)
 
 def display_treasury_yield_curve():
     
-    fig = px.line(
-        df, 
-        x="Residual Maturity", 
-        y=["Latest", "-1W", "-1M", "-6M", "-1Y"], 
-        line_shape='spline',
-        color_discrete_map={
-            "-1W": "#FADBD8",
-            "-1M": "#EBDEF0",
-            "-6M": "#D4E6F1",
-            "-1Y": "#D4EFDF",
-            "Latest": "#2ECC71",
-        },
-    )
+    color_map = {
+        "-1W": "#FADBD8",
+        "-1M": "#EBDEF0",
+        "-6M": "#D4E6F1",
+        "-1Y": "#D4EFDF",
+        "Latest": "#2ECC71",
+    }
 
-    fig.update_layout(
+    # Create traces for each series
+    traces = [
+        go.Scatter(
+            x=df['Residual Maturity'], 
+            y=df[col], 
+            mode='lines', 
+            name=col,
+            line_shape='spline',
+            line=dict(color=color_map[col])
+        ) for col in ["Latest", "-1W", "-1M", "-6M", "-1Y"]
+    ]
+
+    layout = dict(
         title=dict(
             text="Treasury Yield Curve",
-            x=0.08,
+            x=0.02,
             xanchor="left",
         ),
         plot_bgcolor="white",
+        margin=dict(l=60,r=20,t=80,b=20,pad=4),
         yaxis=dict(
-            tickformat=".2f", 
-            fixedrange= True,
+            tickformat=".1f", 
+            fixedrange=True,
             side="left",
             ticksuffix="%",
             showline=True,
@@ -80,7 +87,7 @@ def display_treasury_yield_curve():
             title=""
         ),
         xaxis=dict( 
-            fixedrange= True,
+            fixedrange=True,
             showline=True,
             linecolor="grey",
             title=""
@@ -92,9 +99,11 @@ def display_treasury_yield_curve():
             xanchor="right",
             x=1,
             title=""
-        ),
-    ) 
+        )
+    )
     
+    fig = dict(data=traces, layout=layout)
     return html.Div([
-        dcc.Graph(figure=fig, config={"displayModeBar": False}),
+        dcc.Graph(figure=fig, 
+                  config={"displayModeBar": False}),
     ])

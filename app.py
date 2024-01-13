@@ -7,36 +7,35 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 
 #  Views - Individual Charts
-from views.header import display_header
-from views.treasury_yield_curve import display_treasury_yield_curve
-from views.dxy import display_dxy
-from views.brent import display_brent
-from views.gold import display_gold
-from views.ftse100 import display_ftse
-from views.sp500 import display_sp500
-from views.nasaq import display_nasdaq
-from views.hangseng import display_hangseng
-from views.gaming_equities import display_gaming_equities
-from views.bit1_portfolio import display_bit1_portfolio
-from views.bit2_portfolio import display_bit2_portfolio
-from views.btc import display_btc
-from views.eth import display_eth
-from views.crypto_price_performance_30d import display_crypto_price_performance_30d_chart
-from views.bit1_token_performance_table_usd import display_bit1_portfolio_table_usd
-from views.bit2_token_performance_table_usd import display_bit2_portfolio_table_usd
-from views.btc_pearson_correlation import display_btc_pearson_correlation
-from views.nft_rankings import display_nft_collection_ranking_table
-from views.monthly_Web3_Gamers import monthly_web3_gamers
-from views.weekly_web3_gaming_vol import weekly_web3_gaming_vol
-from views.top_web3_games import top_web3_games
-from views.btc_futures_aggregated_open_interest import display_btc_futures_agg_open_interest_chart
-from views.eth_futures_aggregated_open_interest import display_eth_futures_agg_open_interest_chart
-from views.fear_and_greed_index import display_fear_and_greed_chart
-from views.fear_and_greed_meter import display_fear_and_greed_meter
-from views.fed_liquidity_index import display_fed_liquidity_index_chart
-from views.annualized_btc_volatility_30d import display_btc_annualized_volatility_30d
-from views.token_watchlist import display_token_watchlist
-from views.bit2_liquid_investments_table import display_bit2_liquid_investments
+from views.macro.treasury_yield_curve import display_treasury_yield_curve
+from views.macro.dxy import display_dxy
+from views.macro.brent import display_brent
+from views.macro.gold import display_gold
+from views.macro.ftse100 import display_ftse
+from views.macro.sp500 import display_sp500
+from views.macro.nasaq import display_nasdaq
+from views.macro.hangseng import display_hangseng
+from views.macro.gaming_equities import display_gaming_equities
+from views.bit1.bit1_portfolio import display_bit1_portfolio
+from views.bit2.bit2_portfolio import display_bit2_portfolio
+from views.crypto_market.btc import display_btc
+from views.crypto_market.eth import display_eth
+from views.crypto_market.crypto_price_performance_30d import display_crypto_price_performance_30d_chart
+from views.bit1.bit1_token_performance_table_usd import display_bit1_portfolio_table_usd
+from views.bit2.bit2_token_performance_table_usd import display_bit2_portfolio_table_usd
+from views.crypto_market.btc_pearson_correlation import display_btc_pearson_correlation
+from views.nfts.nft_rankings import display_nft_collection_ranking_table
+from views.crypto_gaming.monthly_Web3_Gamers import monthly_web3_gamers
+from views.crypto_gaming.weekly_web3_gaming_vol import weekly_web3_gaming_vol
+from views.crypto_gaming.top_web3_games import top_web3_games
+from views.crypto_market.btc_futures_aggregated_open_interest import display_btc_futures_agg_open_interest_chart
+from views.crypto_market.eth_futures_aggregated_open_interest import display_eth_futures_agg_open_interest_chart
+from views.crypto_market.fear_and_greed_index import display_fear_and_greed_chart
+from views.crypto_market.fear_and_greed_meter import display_fear_and_greed_meter
+from views.macro.fed_liquidity_index import display_fed_liquidity_index_chart
+from views.crypto_market.annualized_btc_volatility_30d import display_btc_annualized_volatility_30d
+from views.watchlists.token_watchlist import display_token_watchlist
+from views.bit2.bit2_liquid_investments_table import display_bit2_liquid_investments
 
 server = app.server
 app.layout = html.Div(
@@ -51,82 +50,83 @@ app.layout = html.Div(
                     ),
                 ],
             ),
+            html.H1('BIT1 Overview', style={'text-align': 'center'}),
             dbc.Row(
                 [
-                    dbc.Col(display_treasury_yield_curve(), width=4, className='p-0', style={'height': '100%', 'overflow': 'auto'}),
-                    dbc.Col(display_dxy(), width=4, className='p-0', style={'height': '100%', 'overflow': 'auto'}),
-                    dbc.Col(display_brent(), width=4, className='p-0', style={'height': '100%', 'overflow': 'auto'})
-                ],
-                className='my-0'
-            ),
-            dbc.Row(
-                [                 
-                    dbc.Col(display_fed_liquidity_index_chart(), width=6),
+                    dbc.Col(display_bit1_portfolio(), width=12),
                 ],
             ),
             dbc.Row(
                 [
-                    dbc.Col(display_gold(), width=4),
-                    dbc.Col(display_ftse(), width=4),
-                    dbc.Col(display_sp500(), width=4),
+                    dbc.Col(display_bit1_portfolio_table_usd(), width=12),
+                ],
+            ),
+            html.Br(),
+            html.H1('BIT2 Overview', style={'text-align': 'center'}),
+            dbc.Row(
+                [
+                    dbc.Col(display_bit2_portfolio(), width=12),
                 ],
             ),
             dbc.Row(
                 [
-                    dbc.Col(display_nasdaq(), width=4),
-                    dbc.Col(display_hangseng(), width=4),
+                    dbc.Col(display_bit2_portfolio_table_usd(), width=12),
+                ],
+            ),
+            html.Br(),
+            dbc.Row(
+                [
+                    dbc.Col(display_bit2_liquid_investments(), width=12),
+                ],
+            ),
+            html.Br(),
+            html.H1('Treasury, Currency and Equities', style={'text-align': 'center'}),
+            dbc.Row(
+                [
+                    dbc.Col(display_treasury_yield_curve(), width=3),
+                    dbc.Col(display_fed_liquidity_index_chart(), width=6),                    
+                    dbc.Col(display_dxy(), width=3),
+                ],
+            ),
+            dbc.Row(
+                [                    
+                    dbc.Col(display_brent(), width=3),
+                    dbc.Col(display_gold(), width=3),
+                    dbc.Col(display_ftse(), width=3),
+                    dbc.Col(display_sp500(), width=3),
+                ],
+            ),
+            dbc.Row(
+                [
+                    dbc.Col(display_nasdaq(), width=3),
+                    dbc.Col(display_hangseng(), width=3),
+                    dbc.Col(display_gaming_equities(), width=6),
                     
                 ],
             ),
+            html.Br(),
+            html.H1('Token Watchlist', style={'text-align': 'center'}),
             dbc.Row(
                 [
-                    dbc.Col(display_gaming_equities(), width=8),
+                    dbc.Col(display_token_watchlist(), width=12),
                 ],
             ),
+            html.Br(),
+            html.H1('Crypto Market', style={'text-align': 'center'}),
             dbc.Row(
-                [
-                    dbc.Col(display_bit1_portfolio(), width=8),
-                ],
-            ),
-            dbc.Row(
-                [
-                    dbc.Col(display_bit1_portfolio_table_usd(), width=8),
-                ],
-            ),
-            dbc.Row(
-                [
-                    dbc.Col(display_bit2_portfolio(), width=8),
-                ],
-            ),
-            dbc.Row(
-                [
-                    dbc.Col(display_bit2_portfolio_table_usd(), width=8),
-                ],
-            ),
-            dbc.Row(
-                [
-                    dbc.Col(display_bit2_liquid_investments(), width=8),
-                ],
-            ),
-            dbc.Row(
-                [
-                    dbc.Col(display_token_watchlist(), width=8),
+                [                 
+                    dbc.Col(display_crypto_price_performance_30d_chart(), width=12),
                 ],
             ),
             dbc.Row(
                 [                 
-                    dbc.Col(display_crypto_price_performance_30d_chart(), width=8),
+                    dbc.Col(display_btc(), width=6),
+                    dbc.Col(display_eth(), width=6),
                 ],
             ),
             dbc.Row(
                 [                 
-                    dbc.Col(display_btc(), width=4),
-                    dbc.Col(display_eth(), width=4),
-                ],
-            ),
-            dbc.Row(
-                [                 
-                    dbc.Col(display_btc_pearson_correlation(), width=8),
+                    dbc.Col(display_btc_pearson_correlation(), width=12),
                 ],
             ),
             dbc.Row(
@@ -177,47 +177,7 @@ app.layout = html.Div(
             ),
             dbc.Row(
                 [                 
-                    dbc.Col(
-                        html.Iframe(
-                           width="100%", 
-                           height="420", 
-                           src="https://embed.theblockcrypto.com/data/crypto-markets/options/aggregated-open-interest-of-bitcoin-options/embed",
-                           title="Aggregated Open Interest of Bitcoin Options"
-                        ), width=6
-                    ),
-                    dbc.Col(
-                        html.Iframe(
-                           width="100%", 
-                           height="420", 
-                           src="https://embed.theblockcrypto.com/data/crypto-markets/options/btc-put-call-ratio/embed",
-                           title="BTC Put/Call Ratio"
-                        ), width=6
-                    ),
-                ],
-            ),
-            dbc.Row(
-                [                 
-                    dbc.Col(
-                        html.Iframe(
-                           width="100%", 
-                           height="420", 
-                           src="https://embed.theblockcrypto.com/data/crypto-markets/options/aggregated-open-interest-of-ethereum-options/embed",
-                           title="Aggregated Open Interest of Ethereum Options"
-                        ), width=6
-                    ),
-                    dbc.Col(
-                        html.Iframe(
-                           width="100%", 
-                           height="420", 
-                           src="https://embed.theblockcrypto.com/data/crypto-markets/options/eth-put-call-ratio/embed",
-                           title="ETH Put/Call Ratio"
-                        ), width=6
-                    ),
-                ],
-            ),
-            dbc.Row(
-                [                 
-                    dbc.Col(display_nft_collection_ranking_table(), width=8),
+                    dbc.Col(display_nft_collection_ranking_table(), width=12),
                 ],
             ),
             dbc.Row(

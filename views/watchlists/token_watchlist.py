@@ -17,14 +17,13 @@ cursor = col.find()
 df = pd.DataFrame(list(cursor))
 df['fdv'] = pd.to_numeric(df['fdv'], errors='coerce')
 df.sort_values('fdv', ascending=False, inplace=True)
-df.drop(columns=['_id','coin_id', 'rank'], inplace=True)
+df.drop(columns=['_id','coin_id', 'rank', 'price_change_pc_24hr', 'total_supply'], inplace=True)
 df['price'] = df['price'].astype(float).round(3)
 
 # Rename columns 
 df.rename(columns={
     'token': 'Ticker',
     'price': "Price ($)",
-    'price_change_pc_24hr': '24H',
     'price_change_pc_7d': '7D',
     'price_change_pc_30d': '30D',
     'price_change_pc_3m': '3M',
@@ -33,7 +32,6 @@ df.rename(columns={
     'market_cap': 'MC ($)',
     'fdv': 'FDV ($)',
     'circulating_supply': 'Circ. Supply',
-    'total_supply': 'Total Supply',
     'max_supply': 'Max Supply',
     'pc_circulating': 'Circ'
 }, inplace=True)
@@ -52,7 +50,7 @@ def convert_to_shorthand(n):
     return str(n) # If less than thousand, return as is
 
 # Apply the function to necessary columns
-for col in ['24H Vol ($)', 'MC ($)', 'FDV ($)', 'Circ. Supply', 'Total Supply', 'Max Supply']:
+for col in ['24H Vol ($)', 'MC ($)', 'FDV ($)', 'Circ. Supply', 'Max Supply']:
     df[col] = df[col].apply(convert_to_shorthand)
 
 # Apply '%' to 'CIRC' column and remove decimal places
@@ -90,7 +88,6 @@ def display_token_watchlist():
             {"name": ["", "Ticker"], "id": "Ticker"},
             {"name": ["", "Price ($)"], "id": "Price ($)"},
             {"name": ["", "24H Vol ($)"], "id": "24H Vol ($)"},
-            {"name": ["Change", "24H"], "id": "24H"},
             {"name": ["Change", "7D"], "id": "7D"},
             {"name": ["Change", "30D"], "id": "30D"},
             {"name": ["Change", "3M"], "id": "3M"},
@@ -98,7 +95,6 @@ def display_token_watchlist():
             {"name": ["", "MC ($)"], "id": "MC ($)"},
             {"name": ["", "FDV ($)"], "id": "FDV ($)"},
             {"name": ["Supply", "Circ. Supply"], "id": "Circ. Supply"},
-            {"name": ["Supply", "Total Supply"], "id": "Total Supply"},
             {"name": ["Supply", "Max Supply"], "id": "Max Supply"},
             {"name": ["Supply", "Circ"], "id": "Circ"},
         ]
@@ -114,12 +110,12 @@ def display_token_watchlist():
                 {
                     'if': {'column_id': c, 'filter_query': '{{{}}} contains "("'.format(c)},
                     'color': 'red'
-                } for c in ['24H','7D','30D','3M','6M']
+                } for c in ['7D','30D','3M','6M']
             ] + [
                 {
                     'if': {'column_id': c},
                     'backgroundColor': '#e8f4ff' 
-                } for c in ['24H', '7D', '30D', '3M', '6M', 'Circ. Supply', 'Total Supply', 'Max Supply', 'Circ']
+                } for c in ['7D', '30D', '3M', '6M', 'Circ. Supply', 'Max Supply', 'Circ']
             ],
             style_header={'fontWeight': 'bold'},
             style_header_conditional=[
@@ -131,7 +127,7 @@ def display_token_watchlist():
                     'textAlign': 'center',
                     'backgroundColor': '#46637f',
                     'color': 'white',
-                } for c in ['24H', '7D', '30D', '3M', '6M', 'Circ. Supply', 'Total Supply', 'Max Supply', 'Circ']
+                } for c in ['7D', '30D', '3M', '6M', 'Circ. Supply', 'Max Supply', 'Circ']
             ] 
             + [
                 {
@@ -151,7 +147,7 @@ def display_token_watchlist():
                     },
                     'textAlign': 'center',
                     'backgroundColor': '#3C7CA6'
-                } for c in ['24H', '7D', '30D', '3M', '6M', 'Circ. Supply', 'Total Supply', 'Max Supply', 'Circ']
+                } for c in ['7D', '30D', '3M', '6M', 'Circ. Supply', 'Max Supply', 'Circ']
             ],
             merge_duplicate_headers=True,
         )
