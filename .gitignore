@@ -1,10 +1,24 @@
-venv
+# Python virtual environment
+venv/
+
+# Compiled Python files
 *.pyc
-.DS_Store # Only if you are using macOS
-.env
+
+# macOS system files
 .DS_Store
+
+# Environment variables file
+.env
+
+# Node.js package lock file
 package-lock.json
-node_modules
+
+# Node modules directory
+**/node_modules/
+
+# PDF files
 *.pdf
+
+# Sensitive credentials
 credentials.json
 token.json
