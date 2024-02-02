@@ -42,8 +42,10 @@ def update_chart(rng):
             x=0.08,
             xanchor="left"
         ),
+        margin=dict(l=20,r=100,t=120,b=60,pad=4),
         colorway=["#17B897"],
         plot_bgcolor="white",
+        height=600,
         yaxis=dict(
             tickformat=".0f", 
             fixedrange= True,
@@ -82,6 +84,9 @@ def update_chart(rng):
             showline=True,
             linecolor="grey",
             title=""
+        ),
+        font=dict( 
+            size=20
         )
     )
 

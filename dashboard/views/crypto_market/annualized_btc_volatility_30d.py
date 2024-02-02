@@ -66,15 +66,16 @@ def update_chart(relayoutData):
         ),
         colorway=["#17B897"],
         plot_bgcolor="white",
+        margin=dict(l=20,r=100,t=120,b=60,pad=4),
+        height=600,
         yaxis=dict(
             tickformat=".0%", 
             fixedrange= True,
-            side="left",
+            side="right",
             showline=True,
             linecolor="grey",
             title="",
-            showgrid=True,
-            gridcolor="lightgrey"
+            showgrid=False,
         ),
         xaxis=dict(
             rangeselector=dict(
@@ -106,6 +107,9 @@ def update_chart(relayoutData):
             showline=True,
             linecolor="grey",
             title=""
+        ),
+        font=dict( 
+            size=20
         )
     )
     

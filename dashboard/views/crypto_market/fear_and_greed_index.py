@@ -42,17 +42,18 @@ def update_chart(relayoutData=None):
             x=0.08,
             xanchor="left"
         ),
+        margin=dict(l=20,r=100,t=120,b=60,pad=4),
         colorway=["#17B897"],
         plot_bgcolor="white",
+        height=600,
         yaxis=dict(
             tickformat=".0f", 
             fixedrange= True,
-            side="left",
+            side="right",
             showline=True,
             linecolor="grey",
             title="",
-            showgrid=True,
-            gridcolor="lightgrey"
+            showgrid=False,
         ),
         xaxis=dict(
             rangeselector=dict(
@@ -84,6 +85,9 @@ def update_chart(relayoutData=None):
             showline=True,
             linecolor="grey",
             title=""
+        ),
+        font=dict( 
+            size=20
         )
     )
     

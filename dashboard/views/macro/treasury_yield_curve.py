@@ -76,7 +76,8 @@ def display_treasury_yield_curve():
             xanchor="left",
         ),
         plot_bgcolor="white",
-        margin=dict(l=60,r=20,t=80,b=20,pad=4),
+        margin=dict(l=80,r=40,t=120,b=60,pad=4),
+        height=500,
         yaxis=dict(
             tickformat=".1f", 
             fixedrange=True,
@@ -99,6 +100,9 @@ def display_treasury_yield_curve():
             xanchor="right",
             x=1,
             title=""
+        ),
+        font=dict( 
+            size=20
         )
     )
     

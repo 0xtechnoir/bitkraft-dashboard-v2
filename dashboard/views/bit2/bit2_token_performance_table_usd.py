@@ -22,7 +22,7 @@ client = pymongo.MongoClient(MONGODB_CONNECTION)
 db = client["historical_price_data"]
 
 #  create a new dataframe for the table
-df_table = pd.DataFrame(columns=['Token', 'Cost Basis ($)', 'Current ($)', 'Vested', 'Realized ($)', 'Unrealized ($)', 'Prior Week ($)', 'Prior Year ($)', 'Weekly Change', 'YTD Change', 'YoY Change', 'ROI'])
+df_table = pd.DataFrame(columns=['Token', 'Cost Basis ($)', 'Current ($)', 'Vested', 'Realized ($)', 'Unrealized ($)', 'Prior Week ($)', 'Prior Year ($)', '7D Change', 'YTD Change', 'YoY Change', 'ROI'])
 
 # Pull token vesting data
 sheet_id = '1wm5Whcdxm7FDBsNeQsJqXtPXJ7tDf6JrjY3EDBlQZPU'
@@ -70,6 +70,8 @@ for index, coin in enumerate(coinIds):
         realised = None
         unrealised = None
 
+    print(f'Coin: {name}, Unrealised: {unrealised}, Typeof Unrealized: {type(unrealised)}')
+
     new_entry = {
         'Token': name,
         'Cost Basis ($)': '{:,.4f}'.format(cb),
@@ -79,7 +81,7 @@ for index, coin in enumerate(coinIds):
         'Unrealized ($)': '{:,.0f}'.format(float(unrealised)) if unrealised is not None else '-',
         'Prior Week ($)': '{:,.5f}'.format(prior_week_price) if prior_week_price is not None else '-',
         'Prior Year ($)': '{:,.5f}'.format(prior_year_price) if prior_year_price is not None else '-',
-        'Weekly Change': ((current_price - prior_week_price)/prior_week_price)*100 if prior_week_price is not None else '-',
+        '7D Change': ((current_price - prior_week_price)/prior_week_price)*100 if prior_week_price is not None else '-',
         'YTD Change': ((current_price - ytd_price)/ytd_price)*100 if ytd_price is not None else '-',
         'YoY Change': ((current_price - prior_year_price)/prior_year_price)*100 if prior_year_price is not None else '-',
         'ROI': int(round(roi)),
@@ -103,9 +105,9 @@ def formatCell(val, column):
     if pd.isna(val):
         return ' '
     elif isinstance(val, (int, float)) and val < 0:
-        return f'({abs(val)}{ "%" if column in ["ROI", "Weekly Change", "YTD Change", "YoY Change", "Vested"] else ""})'
+        return f'({abs(val)}{ "%" if column in ["ROI", "7D Change", "YTD Change", "YoY Change", "Vested"] else ""})'
     elif isinstance(val, (int, float)):
-        return f'{val}{ "%" if column in ["ROI", "Weekly Change", "YTD Change", "YoY Change", "Vested"] else ""}'
+        return f'{val}{ "%" if column in ["ROI", "7D Change", "YTD Change", "YoY Change", "Vested"] else ""}'
     return val
 
 df = df_table.applymap(formatNum).apply(lambda x: x.map(lambda y: formatCell(y, x.name)))
@@ -121,13 +123,14 @@ def display_bit2_portfolio_table_usd():
             data=df.to_dict("records"),
             style_cell={
                 'textAlign': 'center',
-                'padding': '0px 15px'
+                'padding': '0px 15px',
+                'fontSize': '20px',
             },
             style_data_conditional=[
                 {
                     'if': {'column_id': c, 'filter_query': '{{{}}} contains "("'.format(c)},
                     'color': 'red'
-                } for c in ['ROI', 'Weekly Change', 'YTD Change', 'YoY Change']
+                } for c in ['ROI', '7D Change', 'YTD Change', 'YoY Change']
             ],
             style_header={
                 'fontWeight': 'bold',
@@ -135,4 +138,4 @@ def display_bit2_portfolio_table_usd():
                 'color': 'white',
             },
         ),
-    ])
+    ],style={'margin': '20px'})

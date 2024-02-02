@@ -53,7 +53,9 @@ def update_chart(rng):
         ),
         colorway=["#17B897"],
         plot_bgcolor="white",
-        margin=dict(l=20,r=50,t=80,b=20,pad=4),
+        # margin=dict(l=40,r=80,t=120,b=60,pad=4),
+        margin=dict(l=20,r=100,t=120,b=60,pad=4),
+        height=500,
         yaxis=dict(
             tickformat=".0f", 
             fixedrange= True,
@@ -79,6 +81,9 @@ def update_chart(rng):
             showline=True,
             linecolor="grey",
             title=""
+        ),
+        font=dict( 
+            size=20
         )
     )
     fig = dict(data=[trace], layout=layout)

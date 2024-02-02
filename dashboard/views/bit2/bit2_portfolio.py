@@ -17,9 +17,9 @@ labels = ["KARATE"]
 client = pymongo.MongoClient(MONGODB_CONNECTION)
 db = client["historical_price_data"]
 
+
 df = pd.DataFrame(columns=['time'])
 df.set_index('time', inplace=True)
-
 for index, coin in enumerate(coinIds):
     col = db[coin]
     cursor = col.find({}, {"_id": 0, "time": 1, "eth_value": 1})
@@ -76,7 +76,7 @@ def update_chart(rng):
             x=0.01,
             xanchor="left",
         ),
-        margin=dict(l=20,r=70,t=80,b=30,pad=4),
+        margin=dict(l=20,r=100,t=120,b=60,pad=4),
         legend=dict(
             orientation="h",
             yanchor="bottom",
@@ -86,7 +86,7 @@ def update_chart(rng):
             title=""
         ),
         yaxis=dict(
-            tickformat=".2f",
+            tickformat=".0f",
             fixedrange=True,
             side="right",
             ticksuffix="%",
@@ -126,7 +126,10 @@ def update_chart(rng):
                     dash="dash"
                 ),
             ),
-        ]
+        ],
+        font=dict( 
+            size=20
+        )
     )
 
     fig = dict(data=traces, layout=layout)

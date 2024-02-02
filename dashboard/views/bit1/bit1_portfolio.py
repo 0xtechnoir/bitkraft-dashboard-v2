@@ -15,7 +15,6 @@ MONGODB_CONNECTION = os.getenv('MONGODB_CONNECTION')
 coinIds = ["yield-guild-games", "alethea-artificial-liquid-intelligence-token",
            "immutable-x", "rainbow-token-2", "superfarm", "matic-network", "sipher", 
            "blackpool-token", "vcore"]
-
 labels = ["YGG", "ALI", "IMX", "RBW", "SUPER", "MATIC", "SIPHER", "BPT", "VCORE"]
 
 client = pymongo.MongoClient(MONGODB_CONNECTION)
@@ -85,7 +84,7 @@ def update_chart(rng):
             x=0.01,
             xanchor="left",
         ),
-        margin=dict(l=20,r=70,t=80,b=30,pad=4),
+        margin=dict(l=20,r=100,t=120,b=60,pad=4),
         legend=dict(
             orientation="h",
             yanchor="bottom",
@@ -137,7 +136,10 @@ def update_chart(rng):
                     dash="dash"
                 ),
             ),
-        ]
+        ],
+        font=dict( 
+            size=20
+        )
     )
 
     fig = dict(data=traces, layout=layout)

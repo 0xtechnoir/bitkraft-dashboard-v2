@@ -80,9 +80,11 @@ def update_chart(relayoutData=None):
         ),
         colorway=["#17B897"],
         plot_bgcolor="white",
+        margin=dict(l=20,r=100,t=120,b=20,pad=4),
+        height=600,
         yaxis=dict(
             fixedrange= True,
-            side="left",
+            side="right",
             showline=True,
             linecolor="grey",
             title=""
@@ -120,7 +122,11 @@ def update_chart(relayoutData=None):
             type="date",
             showline=True,
             linecolor="grey",
-            title=""
+            title="",
+            dtick="M12",
+        ),
+        font=dict( 
+            size=20
         )
     )
     

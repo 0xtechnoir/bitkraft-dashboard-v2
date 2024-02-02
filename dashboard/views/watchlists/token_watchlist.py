@@ -63,6 +63,13 @@ df = df.fillna('-')
 df_top_10 = df.iloc[:10]  # Top 10 records
 df_rest = df.iloc[10:]    # The remaining records
 
+def create_upcoming_tge_df():
+    tickers = ["MAVIA", "GUNZ", "MNCT", "BLOCK", "AOD", "PORTAL", "XBG", "AETHER", "RDYX", "SPAACE", "LORDS (Blocklords)"]
+    data = {col: ['-'] * len(tickers) for col in df.columns}  # Initialize all columns with '-'
+    data['Ticker'] = tickers  # Populate Ticker column with specific values
+    df_upcoming_tge = pd.DataFrame(data)
+    return df_upcoming_tge
+
 def display_token_watchlist():
     
     column_styles = []
@@ -104,8 +111,12 @@ def display_token_watchlist():
             data=df.to_dict("records"),
             style_cell={
                 'textAlign': 'center',
-                'padding': '0px 15px'
+                'padding': '0px 5px',
+                'fontSize': '20px',
             },
+            style_cell_conditional=[
+            {'if': {'column_id': 'Ticker'}, 'textAlign': 'left'},
+            ],
             style_data_conditional=[
                 {
                     'if': {'column_id': c, 'filter_query': '{{{}}} contains "("'.format(c)},
@@ -151,12 +162,16 @@ def display_token_watchlist():
             ],
             merge_duplicate_headers=True,
         )
+    
+    df_upcoming_tge = create_upcoming_tge_df()
 
     return html.Div([
-        html.H4('Token Watchlist (Top 10 FDV)', style={'text-align': 'left'}),
-        create_data_table(df_top_10),
-        html.H4('Speculative Token Watchlist (by FDV)', style={'text-align': 'left'}),
-        create_data_table(df_rest),
-    ])
+        html.Div([html.H4('Token Watchlist (Top 10 FDV)', style={'text-align': 'left', 'margin-top': '50px'}),
+                  create_data_table(df_top_10)]),
+        html.Div([html.H4('Speculative Token Watchlist (by FDV)', style={'text-align': 'left', 'margin-top': '50px'}),
+                  create_data_table(df_rest)]),
+        html.Div([html.H4('Upcoming TGEs', style={'text-align': 'left', 'margin-top': '50px'}),
+                  create_data_table(df_upcoming_tge)])
+    ], style={'margin': '20px'})
 
 

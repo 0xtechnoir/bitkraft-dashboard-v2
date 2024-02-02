@@ -18,7 +18,7 @@ client = pymongo.MongoClient(MONGODB_CONNECTION)
 db = client["historical_price_data"]
 
 #  create a new dataframe for the table
-df_table = pd.DataFrame(columns=['Token', 'Cost Basis ($)', 'Current ($)', 'Tokens Held', 'Realized ($)', 'Unrealized ($)', 'Prior Week ($)', 'Prior Year ($)', 'Weekly Change', 'YTD Change', 'YoY Change', 'ROI'])
+df_table = pd.DataFrame(columns=['Token', 'Cost Basis ($)', 'Current ($)', 'Tokens Held', 'Realized ($)', 'Unrealized ($)', 'Prior Week ($)', 'Prior Year ($)', '7D Change', 'YTD Change', 'YoY Change', 'ROI'])
 
 # Pull liquid token data
 sheetId = '1wm5Whcdxm7FDBsNeQsJqXtPXJ7tDf6JrjY3EDBlQZPU'
@@ -83,7 +83,7 @@ for index, row in sheet_df.iterrows():
         'Unrealized ($)': '{:,.0f}'.format(float(unrealised)) if unrealised is not None else '-',
         'Prior Week ($)': '{:,.5f}'.format(prior_week_price) if prior_week_price is not None else '-',
         'Prior Year ($)': '{:,.5f}'.format(prior_year_price) if prior_year_price is not None else '-',
-        'Weekly Change': ((current_price - prior_week_price)/prior_week_price)*100 if prior_week_price is not None else '-',
+        '7D Change': ((current_price - prior_week_price)/prior_week_price)*100 if prior_week_price is not None else '-',
         'YTD Change': ((current_price - ytd_price)/ytd_price)*100 if ytd_price is not None else '-',
         'YoY Change': ((current_price - prior_year_price)/prior_year_price)*100 if prior_year_price is not None else '-',
         'ROI': int(round(roi)),
@@ -126,7 +126,8 @@ def display_bit2_liquid_investments():
             data=df.to_dict("records"),
             style_cell={
                 'textAlign': 'center',
-                'padding': '0px 15px'
+                'padding': '0px 15px',
+                'fontSize': '20px',
             },
             style_data_conditional=[
                 {
@@ -140,4 +141,4 @@ def display_bit2_liquid_investments():
                 'color': 'white',
             },
         ),
-    ])
+    ],style={'margin': '20px'})

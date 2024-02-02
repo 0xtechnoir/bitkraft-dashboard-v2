@@ -48,6 +48,7 @@ def update_chart():
             x=0.08,
             xanchor="left",
         ),
+        margin=dict(l=20,r=100,t=120,b=60,pad=4),
         colorway=["#17B897"],
         plot_bgcolor="white",
         yaxis=dict(
@@ -92,7 +93,10 @@ def update_chart():
             showline=True,
             linecolor="grey",
             title=""
-        )
+        ),
+        font=dict( 
+            size=20
+        )     
     )
     fig.add_hline(y=0, line_dash="dash", line_color="black", line_width=0.5, opacity=0.7)
     return fig

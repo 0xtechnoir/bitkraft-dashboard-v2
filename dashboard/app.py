@@ -83,29 +83,33 @@ app.layout = html.Div(
             html.H1('Treasury, Currency and Equities', style={'text-align': 'center'}),
             dbc.Row(
                 [
-                    dbc.Col(display_treasury_yield_curve(), width=3),
-                    dbc.Col(display_fed_liquidity_index_chart(), width=6),                    
-                    dbc.Col(display_dxy(), width=3),
+                    dbc.Col(display_treasury_yield_curve(), width=5),
+                    dbc.Col(display_fed_liquidity_index_chart(), width=7),                    
+                ],
+            ),
+            dbc.Row(
+                [                 
+                    dbc.Col(display_dxy(), width=4),
+                    dbc.Col(display_brent(), width=4),
+                    dbc.Col(display_gold(), width=4),
                 ],
             ),
             dbc.Row(
                 [                    
-                    dbc.Col(display_brent(), width=3),
-                    dbc.Col(display_gold(), width=3),
-                    dbc.Col(display_ftse(), width=3),
-                    dbc.Col(display_sp500(), width=3),
+                    dbc.Col(display_ftse(), width=4),
+                    dbc.Col(display_sp500(), width=4),
+                    dbc.Col(display_nasdaq(), width=4),
                 ],
             ),
             dbc.Row(
                 [
-                    dbc.Col(display_nasdaq(), width=3),
-                    dbc.Col(display_hangseng(), width=3),
-                    dbc.Col(display_gaming_equities(), width=6),
+                    dbc.Col(display_hangseng(), width=4),
+                    dbc.Col(display_gaming_equities(), width=8),
                     
                 ],
             ),
             html.Br(),
-            html.H1('Token Watchlist', style={'text-align': 'center'}),
+            html.H1('Token Watchlists', style={'text-align': 'center'}),
             dbc.Row(
                 [
                     dbc.Col(display_token_watchlist(), width=12),
@@ -159,8 +163,8 @@ app.layout = html.Div(
             ),
              dbc.Row(
                 [                 
-                    dbc.Col(display_fear_and_greed_chart(), width=8),
-                    dbc.Col(display_fear_and_greed_meter(), width=4)
+                    dbc.Col(display_fear_and_greed_chart(), width=12),
+                    # dbc.Col(display_fear_and_greed_meter(), width=2)
 
                 ],
             ),

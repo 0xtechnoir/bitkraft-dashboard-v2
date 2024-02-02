@@ -97,6 +97,7 @@ def update_chart(update):
                 x=1,
                 title=""
             ),
+        height=600,
         yaxis=dict(
                 tickformat=".0f", 
                 fixedrange= True,
@@ -133,7 +134,10 @@ def update_chart(update):
                 linecolor="grey",
                 title=""
             ),
-        plot_bgcolor="white",       
+        plot_bgcolor="white",  
+        font=dict( 
+            size=20
+        )     
     )
 
     fig.add_hline(y=0, line_dash="dash", line_color="black", line_width=0.5, opacity=0.7)
