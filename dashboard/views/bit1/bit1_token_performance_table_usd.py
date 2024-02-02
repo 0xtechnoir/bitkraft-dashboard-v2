@@ -36,8 +36,9 @@ df_table = pd.DataFrame(columns=['Token', 'Cost Basis ($)', 'Current ($)', 'Vest
 
 # Pull token vesting data
 sheet_id = '1SErwWwF7tKbkydZn8LhVXkkf0dRCBDCOX8H2V8qzy4E'
-range = 'Vesting Table for Market Report!A1:E9'
+range = 'Vesting Table for Market Report!A1:E10'
 sheet_values = read_google_sheet(sheet_id, range)
+print(sheet_values)
 if sheet_values:
     sheet_headers = sheet_values[0]
     sheet_data = sheet_values[1:]
