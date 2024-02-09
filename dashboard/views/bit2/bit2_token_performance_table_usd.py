@@ -70,8 +70,6 @@ for index, coin in enumerate(coinIds):
         realised = None
         unrealised = None
 
-    print(f'Coin: {name}, Unrealised: {unrealised}, Typeof Unrealized: {type(unrealised)}')
-
     new_entry = {
         'Token': name,
         'Cost Basis ($)': '{:,.4f}'.format(cb),

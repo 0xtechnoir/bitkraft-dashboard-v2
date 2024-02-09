@@ -36,6 +36,7 @@ from views.macro.fed_liquidity_index import display_fed_liquidity_index_chart
 from views.crypto_market.annualized_btc_volatility_30d import display_btc_annualized_volatility_30d
 from views.watchlists.token_watchlist import display_token_watchlist
 from views.bit2.bit2_liquid_investments_table import display_bit2_liquid_investments
+from views.bit2.liquid_bucket import display_10m_liquid_bucket
 
 server = app.server
 app.layout = html.Div(
@@ -77,6 +78,11 @@ app.layout = html.Div(
             dbc.Row(
                 [
                     dbc.Col(display_bit2_liquid_investments(), width=12),
+                ],
+            ),
+               dbc.Row(
+                [
+                    dbc.Col(display_10m_liquid_bucket(), width=12),
                 ],
             ),
             html.Br(),
